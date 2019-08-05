@@ -2,7 +2,7 @@
 
 @external-grammar elementContent from "./content.js"
 
-entity { text | entityReference | characterReference | cdata | element | comment | processingInst }
+entity { text | entityReference | characterReference | element | comment | processingInst }
 
 element:element.expression {
   openingTag nest.elementContent<:text.literal.expression, "</" space* identifier space* ">", entity*> (closeTag | missingCloseTag) |
@@ -92,13 +92,7 @@ attributeValue:attribute.string.literal { "\"" (attributeContent | entityReferen
 
   doctypeDecl:doctype.declaration.metadata { "<!" ("doctype" | "DOCTYPE") [^>]* ">" }
 
-  cdata:cdata.literal.expression { "<![" ("cdata" | "CDATA") "[" cdataContent }
-
-  cdataContent { [^\]] cdataContent | "]" cdataBracket1 }
-  cdataBracket1 { [^\]] cdataContent | "]" cdataBracket2 }
-  cdataBracket2 { [^\]>] cdataContent | "]" cdataBracket2 | ">" }
-
-  @precedence { comment, cdata, processingInst, doctypeDecl }
+  @precedence { comment, processingInst, doctypeDecl }
 
   space { (" " | "\t" | "\r" | "\n")+ }
 }
