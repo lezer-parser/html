@@ -124,3 +124,34 @@ element.e(opening.t(tag.t),
 <a><img src=blah></a>
 
 ==> element.e(opening.t(tag.t), element.e(selfClosing.t(tag.t, attribute.p, attribute.s)), closing.t(tag.t))
+
+# Implicitly closed
+
+<dl><dd>Hello</dl>
+
+==> element.e(opening.t(tag.t), element.e(opening.t(tag.t), text.l), closing.t(tag.t))
+
+# Closed by sibling
+
+<div>
+  <p>Foo
+  <p>Bar
+</div>
+
+==>
+
+element.e(opening.t(tag.t),
+  text.l,
+  element.e(opening.t(tag.t), text.l),
+  element.e(opening.t(tag.t), text.l),
+  closing.t(tag.t))
+
+# Closed by sibling at top
+
+<p>Foo
+<p>Bar
+
+==>
+
+element.e(opening.t(tag.t), text.l),
+element.e(opening.t(tag.t), text.l)

@@ -3,7 +3,7 @@
 entity { text | entityReference | characterReference | cdata | element | comment | processingInst }
 
 element:element.expression {
-  openingTag entity* closeTag |
+  openingTag entity* (closeTag | missingCloseTag) |
   selfClosingTag
 }
 
@@ -16,7 +16,9 @@ selfClosingTag:selfClosing.tag {
 }
 
 closeTag:closing.tag {
-  startCloseTag space* (matchingTagName | nonMatchingTagName) space* endTag
+  (startCloseTag space* tagName |
+   mismatchedStartCloseTag space* mismatchedTagName)
+  space* endTag
 }
 
 attribute {
@@ -29,9 +31,11 @@ misc {
 
 attributeValue:attribute.string.literal { "\"" (attributeContent | entityReference | characterReference)* "\"" }
 
-@external-tokens closeTagName from "./tokens.js" {
-  matchingTagName:tag.type.name,
-  nonMatchingTagName:tag.mismatch.type.name.error
+@external-tokens tagStart from "./tokens.js" {
+  startTag:tag.open.punctuation,
+  startCloseTag:tag.open.punctuation,
+  mismatchedStartCloseTag:tag.open.punctuation,
+  missingCloseTag
 }
 
 @external-tokens selfClosed from "./tokens.js" {
@@ -39,10 +43,6 @@ attributeValue:attribute.string.literal { "\"" (attributeContent | entityReferen
 }
 
 @tokens {
-  startTag:tag.open.punctuation { "<" }
-
-  startCloseTag:tag.open.punctuation { "</" }
-
   endTag:tag.close.punctuation { ">" }
 
   selfCloseEndTag:tag.close.punctuation { "/>" }
@@ -60,6 +60,8 @@ attributeValue:attribute.string.literal { "\"" (attributeContent | entityReferen
   identifier { nameStart nameChar* }
 
   tagName:tag.type.name { identifier }
+  
+  mismatchedTagName:tag.mismatch.type.name.error { identifier }
 
   attributeName:attribute.property.name { identifier }
 
@@ -94,7 +96,7 @@ attributeValue:attribute.string.literal { "\"" (attributeContent | entityReferen
   cdataBracket1 { [^\]] cdataContent | "]" cdataBracket2 }
   cdataBracket2 { [^\]>] cdataContent | "]" cdataBracket2 | ">" }
 
-  @precedence { comment, cdata, processingInst, doctypeDecl, startTag }
+  @precedence { comment, cdata, processingInst, doctypeDecl }
 
   space { (" " | "\t" | "\r" | "\n")+ }
 }
