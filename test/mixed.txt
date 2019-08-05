@@ -1,0 +1,17 @@
+# Doesn't parse VB as JS
+
+<script type="text/visualbasic">let something = 20</script>
+
+==> element.e(opening.t(tag.t, attribute.p, attribute.s), wrapped.t, closing.t(tag.t))
+
+# Does parse type-less script tags as JS
+
+<script>/foo/</script>
+
+==> element.e(opening.t(tag.t), wrapped.t(expression.s(regexp.l)), closing.t(tag.t))
+
+# Still doesn't end script tags on closing tags
+
+<script type=something></foo></script>
+
+==> element.e(opening.t(tag.t, attribute.p, attribute.s), wrapped.t, closing.t(tag.t))

@@ -5,7 +5,7 @@
 entity { text | entityReference | characterReference | element | comment | processingInst }
 
 element:element.expression {
-  openingTag nest.elementContent<:text.literal.expression, "</" space* identifier space* ">", entity*> (closeTag | missingCloseTag) |
+  openingTag nest.elementContent<:wrapped.text.expression, "</" space* identifier space* ">", entity*> (closeTag | missingCloseTag) |
   selfClosingTag
 }
 
