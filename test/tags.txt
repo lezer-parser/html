@@ -1,0 +1,126 @@
+# Self-closing tag
+
+<foo/>
+
+==> element.expression(selfClosing.tag(tag.open, tag.type.name, tag.close))
+
+# Regular tag
+
+<foo>bar</foo>
+
+==> element.expression(opening.tag(tag.open, tag.type.name, tag.close), text.literal, closing.tag(tag.open, tag.type.name, tag.close))
+
+# Nested tag
+
+<a><b>c</b><d/></a>
+
+==>
+
+element.e(opening.t(tag.t),
+  element.e(opening.t(tag.t), text.l, closing.t(tag.t)),
+  element.e(selfClosing.t(tag.t)),
+closing.t(tag.t))
+
+# Attribute
+
+<a foo="bar"/>
+
+==> element.e(selfClosing.t(tag.t, attribute.property.name, equals.punctuation, attribute.string.literal))
+
+# Multiple attributes
+
+<a x="one" y="two" z="three"></a>
+
+==> element.e(opening.t(tag.t, attribute.p, attribute.s, attribute.p, attribute.s, attribute.p, attribute.s), closing.t(tag.t))
+
+# Value-less attributes
+
+<a x y="one" z></a>
+
+==> element.e(opening.t(tag.t, attribute.p, attribute.p, attribute.s, attribute.p), closing.t(tag.t))
+
+# Unquoted attributes
+
+<a x=one y z=two></a>
+
+==> element.e(opening.t(tag.t, attribute.p, attribute.s, attribute.p, attribute.p, attribute.s), closing.t(tag.t))
+
+# Entities
+
+<a attr="one&amp;two">&amp;&#67;</a>
+
+==>
+
+element.e(opening.t(tag.t, attribute.p, attribute.s(entity.literal)), entity.literal, character.literal, closing.t(tag.t))
+
+# Doctype
+
+<!doctype html>
+<doc/>
+
+==>
+
+doctype.declaration.metadata,
+element.e(selfClosing.t(tag.t))
+
+# Processing instructions
+
+<?foo?><bar><?baz?></bar>
+
+==>
+
+processing.instruction.metadata,
+element.e(opening.t(tag.t), processing.instruction.metadata, closing.t(tag.t))
+
+# Comments
+
+<!-- top comment -->
+<element><!-- inner comment --> text</element>
+
+==>
+
+block.comment,
+element.e(opening.t(tag.t), block.comment, text.literal, closing.t(tag.t))
+
+# Mismatched tag
+
+<a></b>
+
+==> element.e(opening.t(tag.t), closing.t(tag.mismatch))
+
+# Nested mismatched tag
+
+<a><b><c></c></x></a>
+
+==>
+
+element.e(opening.t(tag.t),
+  element.e(opening.t(tag.t),
+    element.e(opening.t(tag.t), closing.t(tag.t)),
+    closing.t(tag.mismatch)),
+  closing.t(tag.t))
+
+# Mismatched tag with whitespace
+
+<doc>
+  <
+    foo bar="10">
+    blah
+  </oof>
+</doc>
+
+==>
+
+element.e(opening.t(tag.t),
+  text.l,
+  element.e(opening.t(tag.t, attribute.p, attribute.s),
+    text.l
+    closing.t(tag.mismatch))
+  text.l,
+  closing.tag(tag.t))
+
+# Self-closing tags
+
+<a><img src=blah></a>
+
+==> element.e(opening.t(tag.t), element.e(selfClosing.t(tag.t, attribute.p, attribute.s)), closing.t(tag.t))

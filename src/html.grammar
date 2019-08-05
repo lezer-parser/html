@@ -1,0 +1,104 @@
+@top { misc (doctypeDecl misc)? (element misc)+ }
+
+entity { text | entityReference | characterReference | cdata | element | comment | processingInst }
+
+element:element.expression {
+  openingTag entity* closeTag |
+  selfClosingTag
+}
+
+openingTag:opening.tag {
+ startTag space* tagName space* attribute* endTag
+}
+
+selfClosingTag:selfClosing.tag {
+ startTag space* tagName space* attribute* (selfCloseEndTag | selfClosingEndTag)
+}
+
+closeTag:closing.tag {
+  startCloseTag space* (matchingTagName | nonMatchingTagName) space* endTag
+}
+
+attribute {
+  attributeName space* (is space* (attributeValue | unquotedAttributeValue) space*)?
+}
+
+misc {
+  (comment | space | processingInst)*
+}
+
+attributeValue:attribute.string.literal { "\"" (attributeContent | entityReference | characterReference)* "\"" }
+
+@external-tokens closeTagName from "./tokens.js" {
+  matchingTagName:tag.type.name,
+  nonMatchingTagName:tag.mismatch.type.name.error
+}
+
+@external-tokens selfClosed from "./tokens.js" {
+  selfClosingEndTag:tag.close.punctuation
+}
+
+@tokens {
+  startTag:tag.open.punctuation { "<" }
+
+  startCloseTag:tag.open.punctuation { "</" }
+
+  endTag:tag.close.punctuation { ">" }
+
+  selfCloseEndTag:tag.close.punctuation { "/>" }
+
+  nameStart {
+    ":" | std.asciiLetter | "_" |
+    [\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D] |
+    [\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}]
+  }
+
+  nameChar {
+    nameStart | "-" | "." | std.digit [\u00B7\u0300-\u036F\u203F-\u2040]
+  }
+
+  identifier { nameStart nameChar* }
+
+  tagName:tag.type.name { identifier }
+
+  attributeName:attribute.property.name { identifier }
+
+  unquotedAttributeValue:attribute.string.literal { [^ \t\n\r\u00a0=<>"'/]+ }
+
+  attributeContent { [^"&]+ }
+
+  is:equals.punctuation { "=" }
+
+  entityReference:entity.literal.expression { "&" [^#; ]+ ";" }
+
+  characterReference:character.literal.expression { "&#" [^; ]+ ";" }
+
+  text:text.literal.expression { [^<&]+ }
+
+  comment:block.comment { "<!--" commentContent }
+
+  commentContent { [^\-] commentContent | "-" commentDash1 }
+  commentDash1 { [^\-] commentContent | "-" commentDash2 }
+  commentDash2 { [^\->] commentContent | "-" commentDash2 | ">" }
+
+  processingInst:processing.instruction.metadata { "<?" piContent }
+
+  piContent { [^?] piContent | "?" piQuestion }
+  piQuestion { [^>] piContent | ">" }
+
+  doctypeDecl:doctype.declaration.metadata { "<!" ("doctype" | "DOCTYPE") [^>]* ">" }
+
+  cdata:cdata.literal.expression { "<![" ("cdata" | "CDATA") "[" cdataContent }
+
+  cdataContent { [^\]] cdataContent | "]" cdataBracket1 }
+  cdataBracket1 { [^\]] cdataContent | "]" cdataBracket2 }
+  cdataBracket2 { [^\]>] cdataContent | "]" cdataBracket2 | ">" }
+
+  @precedence { comment, cdata, processingInst, doctypeDecl, startTag }
+
+  space { (" " | "\t" | "\r" | "\n")+ }
+}
+
+@tags {
+  @all<:lang=html>
+}
