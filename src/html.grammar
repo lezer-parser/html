@@ -1,9 +1,11 @@
 @top { misc (doctypeDecl misc)? (element misc)+ }
 
+@external-grammar elementContent from "./content.js"
+
 entity { text | entityReference | characterReference | cdata | element | comment | processingInst }
 
 element:element.expression {
-  openingTag entity* (closeTag | missingCloseTag) |
+  openingTag nest.elementContent<:text.literal.expression, "</" space* identifier space* ">", entity*> (closeTag | missingCloseTag) |
   selfClosingTag
 }
 

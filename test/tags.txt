@@ -155,3 +155,17 @@ element.e(opening.t(tag.t),
 
 element.e(opening.t(tag.t), text.l),
 element.e(opening.t(tag.t), text.l)
+
+# Textarea
+
+<p>Enter something: <textarea code-lang=javascript>function foo() {
+  return "</bar>"
+}</textarea>
+
+==> element.e(opening.t(tag.t), text.l, element.e(opening.t(tag.t, attribute.p, attribute.s), text.l, closing.t(tag.t)))
+
+# Script
+
+<script>This is not an entity: &lt;</script>
+
+==> element.e(opening.t(tag.t), text.l, closing.t(tag.t))
