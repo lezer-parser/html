@@ -1,3 +1,5 @@
+import {text} from "./parser.terms.js"
+
 const openTag = /^<\/?\s*([\.\-\:\w\xa1-\uffff]+)/
 
 function tagName(tag) {
@@ -49,7 +51,8 @@ function resolveContent(tags) {
       }
     }
     if (name == "script" || name == "textarea" || name == "style") return {
-      filterEnd: skip(name)
+      filterEnd: skip(name),
+      wrapType: text
     }
     return stay
   }
