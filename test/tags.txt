@@ -162,10 +162,10 @@ element.e(opening.t(tag.t), text.l)
   return "</bar>"
 }</textarea>
 
-==> element.e(opening.t(tag.t), text.l, element.e(opening.t(tag.t, attribute.p, attribute.s), wrapped.t, closing.t(tag.t)))
+==> element.e(opening.t(tag.t), text.l, element.e(opening.t(tag.t, attribute.p, attribute.s), text.l, closing.t(tag.t)))
 
 # Script
 
 <script>This is not an entity: &lt;</script>
 
-==> element.e(opening.t(tag.t), wrapped.t, closing.t(tag.t))
+==> element.e(opening.t(tag.t), text.l, closing.t(tag.t))
