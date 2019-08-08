@@ -65,7 +65,7 @@ attributeValue:attribute.string.literal { "\"" (attributeContent | entityReferen
   
   mismatchedTagName:tag.mismatch.type.name.error { identifier }
 
-  attributeName:attribute.property.name { identifier }
+  attributeName:attribute.definition.property.name { identifier }
 
   unquotedAttributeValue:attribute.string.literal { [^ \t\n\r\u00a0=<>"'/]+ }
 

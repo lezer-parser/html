@@ -2,7 +2,7 @@
 
 <script type="text/visualbasic">let something = 20</script>
 
-==> element.e(opening.t(tag.t, attribute.p, attribute.s), text.l, closing.t(tag.t))
+==> element.e(opening.t(tag.t, attribute.d, attribute.s), text.l, closing.t(tag.t))
 
 # Does parse type-less script tags as JS
 
@@ -14,4 +14,4 @@
 
 <script type=something></foo></script>
 
-==> element.e(opening.t(tag.t, attribute.p, attribute.s), text.l, closing.t(tag.t))
+==> element.e(opening.t(tag.t, attribute.d, attribute.s), text.l, closing.t(tag.t))

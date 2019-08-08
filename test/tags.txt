@@ -25,25 +25,25 @@ closing.t(tag.t))
 
 <a foo="bar"/>
 
-==> element.e(selfClosing.t(tag.t, attribute.property.name, equals.punctuation, attribute.string.literal))
+==> element.e(selfClosing.t(tag.t, attribute.definition.property.name, equals.punctuation, attribute.string.literal))
 
 # Multiple attributes
 
 <a x="one" y="two" z="three"></a>
 
-==> element.e(opening.t(tag.t, attribute.p, attribute.s, attribute.p, attribute.s, attribute.p, attribute.s), closing.t(tag.t))
+==> element.e(opening.t(tag.t, attribute.d, attribute.s, attribute.d, attribute.s, attribute.d, attribute.s), closing.t(tag.t))
 
 # Value-less attributes
 
 <a x y="one" z></a>
 
-==> element.e(opening.t(tag.t, attribute.p, attribute.p, attribute.s, attribute.p), closing.t(tag.t))
+==> element.e(opening.t(tag.t, attribute.d, attribute.d, attribute.s, attribute.d), closing.t(tag.t))
 
 # Unquoted attributes
 
 <a x=one y z=two></a>
 
-==> element.e(opening.t(tag.t, attribute.p, attribute.s, attribute.p, attribute.p, attribute.s), closing.t(tag.t))
+==> element.e(opening.t(tag.t, attribute.d, attribute.s, attribute.d, attribute.d, attribute.s), closing.t(tag.t))
 
 # Entities
 
@@ -51,7 +51,7 @@ closing.t(tag.t))
 
 ==>
 
-element.e(opening.t(tag.t, attribute.p, attribute.s(entity.literal)), entity.literal, character.literal, closing.t(tag.t))
+element.e(opening.t(tag.t, attribute.d, attribute.s(entity.literal)), entity.literal, character.literal, closing.t(tag.t))
 
 # Doctype
 
@@ -113,7 +113,7 @@ element.e(opening.t(tag.t),
 
 element.e(opening.t(tag.t),
   text.l,
-  element.e(opening.t(tag.t, attribute.p, attribute.s),
+  element.e(opening.t(tag.t, attribute.d, attribute.s),
     text.l
     closing.t(tag.mismatch))
   text.l,
@@ -123,7 +123,7 @@ element.e(opening.t(tag.t),
 
 <a><img src=blah></a>
 
-==> element.e(opening.t(tag.t), element.e(selfClosing.t(tag.t, attribute.p, attribute.s)), closing.t(tag.t))
+==> element.e(opening.t(tag.t), element.e(selfClosing.t(tag.t, attribute.d, attribute.s)), closing.t(tag.t))
 
 # Implicitly closed
 
@@ -162,7 +162,7 @@ element.e(opening.t(tag.t), text.l)
   return "</bar>"
 }</textarea>
 
-==> element.e(opening.t(tag.t), text.l, element.e(opening.t(tag.t, attribute.p, attribute.s), text.l, closing.t(tag.t)))
+==> element.e(opening.t(tag.t), text.l, element.e(opening.t(tag.t, attribute.d, attribute.s), text.l, closing.t(tag.t)))
 
 # Script
 
