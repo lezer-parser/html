@@ -96,3 +96,7 @@ attributeValue:attribute.string.literal { "\"" (attributeContent | entityReferen
 
   space { (" " | "\t" | "\r" | "\n")+ }
 }
+
+@tags {
+  @export<raw, :raw.text.literal.expression>
+}

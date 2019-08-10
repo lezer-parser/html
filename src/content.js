@@ -1,4 +1,4 @@
-import {text} from "./parser.terms.js"
+import {raw} from "./parser.terms.js"
 
 const openTag = /^<\/?\s*([\.\-\:\w\xa1-\uffff]+)/
 
@@ -52,7 +52,7 @@ function resolveContent(tags) {
     }
     if (name == "script" || name == "textarea" || name == "style") return {
       filterEnd: skip(name),
-      wrapType: text
+      wrapType: raw
     }
     return stay
   }
