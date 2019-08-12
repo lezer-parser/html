@@ -1,4 +1,4 @@
-@top:document.lang=html { misc (doctypeDecl misc)? (element misc)+ }
+@top:document.lang=html { (entity | doctypeDecl)+ }
 
 @external-grammar elementContent from "./content.js"
 
@@ -25,10 +25,6 @@ closeTag:closing.tag {
 
 attribute {
   attributeName space* (is space* (attributeValue | unquotedAttributeValue) space*)?
-}
-
-misc {
-  (comment | space | processingInst)*
 }
 
 attributeValue:attribute.string.literal.expression { "\"" (attributeContent | entityReference | characterReference)* "\"" }

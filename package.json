@@ -17,6 +17,7 @@
   },
   "scripts": {
     "build": "lezer-generator src/html.grammar -o src/parser && rollup -c",
+    "build-debug": "lezer-generator src/html.grammar --names -o src/parser && rollup -c",
     "prepare": "npm run build",
     "test": "mocha test/test-*.js"
   }

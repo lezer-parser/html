@@ -61,6 +61,7 @@ element.e(opening.t(tag.t, attribute.d, attribute.s(entity.reference)), entity.r
 ==>
 
 doctype.declaration.metadata,
+text.e,
 element.e(selfClosing.t(tag.t))
 
 # Processing instructions
@@ -80,6 +81,7 @@ element.e(opening.t(tag.t), processing.instruction.metadata, closing.t(tag.t))
 ==>
 
 block.comment,
+text.e,
 element.e(opening.t(tag.t), block.comment, text.e, closing.t(tag.t))
 
 # Mismatched tag
