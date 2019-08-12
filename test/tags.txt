@@ -90,6 +90,12 @@ element.e(opening.t(tag.t), block.comment, text.e, closing.t(tag.t))
 
 ==> element.e(opening.t(tag.t), closing.t(tag.mismatch))
 
+# Unclosed tag
+
+<a>
+
+==> element.e(opening.t(tag.t), error)
+
 # Nested mismatched tag
 
 <a><b><c></c></x></a>
