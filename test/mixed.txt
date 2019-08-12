@@ -20,4 +20,4 @@
 
 <html><script>null
 
-==> element.e(opening.t(tag.t), element.e(opening.t(tag.t), script.d(expression.s(null.keyword.e))))
+==> element.e(opening.t(tag.t), element.e(opening.t(tag.t), script.d(expression.s(null.keyword.e))), error)

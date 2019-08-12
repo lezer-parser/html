@@ -94,6 +94,12 @@ element.e(opening.t(tag.t), block.comment, text.e, closing.t(tag.t))
 
 <a>
 
+==> element.e(opening.t(tag.t), error)
+
+# Unclosed implicitly closed tag
+
+<p>
+
 ==> element.e(opening.t(tag.t))
 
 # Nested mismatched tag

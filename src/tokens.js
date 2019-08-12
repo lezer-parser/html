@@ -58,7 +58,11 @@ const elementQuery = [element]
 export const tagStart = new ExternalTokenizer((input, token, stack) => {
   let pos = token.start, first = input.get(pos)
   // End of file, just close anything
-  if (first < 0 && stack.startOf(elementQuery) > -1) token.accept(missingCloseTag, token.start)
+  if (first < 0) {
+    let contextStart = stack.startOf(elementQuery)
+    let match = contextStart < 0 ? null : tagStartExpr.exec(input.read(contextStart, contextStart + 30))
+    if (match && implicitlyClosed[match[1].toLowerCase()]) token.accept(missingCloseTag, token.start)
+  }
   if (first != lessThan) return
   pos++
   let next = input.get(pos), close = false
