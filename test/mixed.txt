@@ -15,3 +15,9 @@
 <script type=something></foo></script>
 
 ==> element.e(opening.t(tag.t, attribute.d, attribute.s), raw.text.e, closing.t(tag.t))
+
+# Missing end tag
+
+<html><script>null
+
+==> element.e(opening.t(tag.t), element.e(opening.t(tag.t), script.d(expression.s(null.keyword.e))))

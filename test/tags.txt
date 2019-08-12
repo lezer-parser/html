@@ -94,7 +94,7 @@ element.e(opening.t(tag.t), block.comment, text.e, closing.t(tag.t))
 
 <a>
 
-==> element.e(opening.t(tag.t), error)
+==> element.e(opening.t(tag.t))
 
 # Nested mismatched tag
 
