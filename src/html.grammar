@@ -31,7 +31,7 @@ misc {
   (comment | space | processingInst)*
 }
 
-attributeValue:attribute.string.literal { "\"" (attributeContent | entityReference | characterReference)* "\"" }
+attributeValue:attribute.string.literal.expression { "\"" (attributeContent | entityReference | characterReference)* "\"" }
 
 @external-tokens tagStart from "./tokens.js" {
   startTag:tag.open.punctuation,
@@ -67,17 +67,17 @@ attributeValue:attribute.string.literal { "\"" (attributeContent | entityReferen
 
   attributeName:attribute.definition.property.name { identifier }
 
-  unquotedAttributeValue:attribute.string.literal { [^ \t\n\r\u00a0=<>"'/]+ }
+  unquotedAttributeValue:attribute.string.literal.expression { [^ \t\n\r\u00a0=<>"'/]+ }
 
   attributeContent { [^"&]+ }
 
   is:equals.punctuation { "=" }
 
-  entityReference:entity.literal.expression { "&" [^#; ]+ ";" }
+  entityReference:entity.reference.expression { "&" [^#; ]+ ";" }
 
-  characterReference:character.literal.expression { "&#" [^; ]+ ";" }
+  characterReference:character.reference.expression { "&#" [^; ]+ ";" }
 
-  text:text.literal.expression { [^<&]+ }
+  text:text.expression { [^<&]+ }
 
   comment:block.comment { "<!--" commentContent }
 
@@ -98,5 +98,5 @@ attributeValue:attribute.string.literal { "\"" (attributeContent | entityReferen
 }
 
 @tags {
-  @export<raw, :raw.text.literal.expression>
+  @export<raw, :raw.text.expression>
 }

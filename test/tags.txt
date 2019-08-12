@@ -8,7 +8,7 @@
 
 <foo>bar</foo>
 
-==> element.expression(opening.tag(tag.open, tag.type.name, tag.close), text.literal, closing.tag(tag.open, tag.type.name, tag.close))
+==> element.expression(opening.tag(tag.open, tag.type.name, tag.close), text.e, closing.tag(tag.open, tag.type.name, tag.close))
 
 # Nested tag
 
@@ -17,7 +17,7 @@
 ==>
 
 element.e(opening.t(tag.t),
-  element.e(opening.t(tag.t), text.l, closing.t(tag.t)),
+  element.e(opening.t(tag.t), text.e, closing.t(tag.t)),
   element.e(selfClosing.t(tag.t)),
 closing.t(tag.t))
 
@@ -51,7 +51,7 @@ closing.t(tag.t))
 
 ==>
 
-element.e(opening.t(tag.t, attribute.d, attribute.s(entity.literal)), entity.literal, character.literal, closing.t(tag.t))
+element.e(opening.t(tag.t, attribute.d, attribute.s(entity.reference)), entity.reference, character.reference, closing.t(tag.t))
 
 # Doctype
 
@@ -80,7 +80,7 @@ element.e(opening.t(tag.t), processing.instruction.metadata, closing.t(tag.t))
 ==>
 
 block.comment,
-element.e(opening.t(tag.t), block.comment, text.literal, closing.t(tag.t))
+element.e(opening.t(tag.t), block.comment, text.e, closing.t(tag.t))
 
 # Mismatched tag
 
@@ -112,11 +112,11 @@ element.e(opening.t(tag.t),
 ==>
 
 element.e(opening.t(tag.t),
-  text.l,
+  text.e,
   element.e(opening.t(tag.t, attribute.d, attribute.s),
-    text.l
+    text.e
     closing.t(tag.mismatch))
-  text.l,
+  text.e,
   closing.tag(tag.t))
 
 # Self-closing tags
@@ -129,7 +129,7 @@ element.e(opening.t(tag.t),
 
 <dl><dd>Hello</dl>
 
-==> element.e(opening.t(tag.t), element.e(opening.t(tag.t), text.l), closing.t(tag.t))
+==> element.e(opening.t(tag.t), element.e(opening.t(tag.t), text.e), closing.t(tag.t))
 
 # Closed by sibling
 
@@ -141,9 +141,9 @@ element.e(opening.t(tag.t),
 ==>
 
 element.e(opening.t(tag.t),
-  text.l,
-  element.e(opening.t(tag.t), text.l),
-  element.e(opening.t(tag.t), text.l),
+  text.e,
+  element.e(opening.t(tag.t), text.e),
+  element.e(opening.t(tag.t), text.e),
   closing.t(tag.t))
 
 # Closed by sibling at top
@@ -153,8 +153,8 @@ element.e(opening.t(tag.t),
 
 ==>
 
-element.e(opening.t(tag.t), text.l),
-element.e(opening.t(tag.t), text.l)
+element.e(opening.t(tag.t), text.e),
+element.e(opening.t(tag.t), text.e)
 
 # Textarea
 
@@ -162,10 +162,10 @@ element.e(opening.t(tag.t), text.l)
   return "</bar>"
 }</textarea>
 
-==> element.e(opening.t(tag.t), text.l, element.e(opening.t(tag.t, attribute.d, attribute.s), raw.text.l, closing.t(tag.t)))
+==> element.e(opening.t(tag.t), text.e, element.e(opening.t(tag.t, attribute.d, attribute.s), raw.text.e, closing.t(tag.t)))
 
 # Script
 
 <script>This is not an entity: &lt;</script>
 
-==> element.e(opening.t(tag.t), raw.text.l, closing.t(tag.t))
+==> element.e(opening.t(tag.t), raw.text.e, closing.t(tag.t))
