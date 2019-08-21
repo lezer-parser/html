@@ -2,22 +2,38 @@
 
 <script type="text/visualbasic">let something = 20</script>
 
-==> element.e(opening.t(tag.t, attribute.d, attribute.s), raw.text.e, closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),EndTag),
+  RawText,
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Does parse type-less script tags as JS
 
 <script>/foo/</script>
 
-==> element.e(opening.t(tag.t), script.document(expression.s(regexp.l)), closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Script(ExpressionStatement(RegExp)),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Still doesn't end script tags on closing tags
 
 <script type=something></foo></script>
 
-==> element.e(opening.t(tag.t, attribute.d, attribute.s), raw.text.e, closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
+  RawText,
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Missing end tag
 
 <html><script>null
 
-==> element.e(opening.t(tag.t), element.e(opening.t(tag.t), script.d(expression.s(null.keyword.e)), error), error)
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Element(OpenTag(StartTag,TagName,EndTag),
+    Script(ExpressionStatement(Null)),⚠),⚠))

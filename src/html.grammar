@@ -1,98 +1,96 @@
-@top:document.lang=html { (entity | doctypeDecl)+ }
+@top[name=Document,lang=html] { (entity | DoctypeDecl)+ }
 
-@external-grammar elementContent from "./content.js"
+@external grammar elementContent from "./content.js"
 
-entity { text | entityReference | characterReference | element | comment | processingInst }
+entity { Text | EntityReference | CharacterReference | Element | Comment | ProcessingInst }
 
-element:element.expression {
-  openingTag nest.elementContent<"</" space* identifier space* ">", entity*> (closeTag | missingCloseTag) |
-  selfClosingTag
+Element {
+  OpenTag nest.elementContent<"</" space* identifier space* ">", entity*> (CloseTag | missingCloseTag) |
+  SelfClosingTag
 }
 
-openingTag:opening.tag {
- startTag space* tagName space* attribute* endTag
+OpenTag {
+  StartTag space* TagName space* Attribute* EndTag
 }
 
-selfClosingTag:selfClosing.tag {
- startTag space* tagName space* attribute* (selfCloseEndTag | selfClosingEndTag)
+SelfClosingTag {
+  StartTag space* TagName space* Attribute* (SelfCloseEndTag | SelfCloserEndTag)
 }
 
-closeTag:closing.tag {
-  (startCloseTag space* tagName |
-   mismatchedStartCloseTag space* mismatchedTagName)
-  space* endTag
+CloseTag {
+  (StartCloseTag space* TagName |
+   MismatchedStartCloseTag space* MismatchedTagName)
+  space* EndTag
 }
 
-attribute {
-  attributeName space* (is space* (attributeValue | unquotedAttributeValue) space*)?
+Attribute {
+  AttributeName space* (Is space* (AttributeValue | UnquotedAttributeValue) space*)?
 }
 
-attributeValue:attribute.string.literal.expression { "\"" (attributeContent | entityReference | characterReference)* "\"" }
+AttributeValue[style=literal.string] { "\"" (attributeContent | EntityReference | CharacterReference)* "\"" }
 
-@external-tokens tagStart from "./tokens.js" {
-  startTag:tag.open.punctuation,
-  startCloseTag:tag.open.punctuation,
-  mismatchedStartCloseTag:tag.open.punctuation,
+@export RawText[style=markup.content] {}
+
+@external tokens tagStart from "./tokens.js" {
+  StartTag[style=bracket.angle.open],
+  StartCloseTag[style=bracket.angle.open],
+  MismatchedStartCloseTag[name=StartCloseTag,style=bracket.angle.open],
   missingCloseTag
 }
 
-@external-tokens selfClosed from "./tokens.js" {
-  selfClosingEndTag:tag.close.punctuation
+@external tokens selfClosed from "./tokens.js" {
+  SelfCloserEndTag[style=bracket.angle.close]
 }
 
 @tokens {
-  endTag:tag.close.punctuation { ">" }
+  EndTag[style=bracket.angle.close] { ">" }
 
-  selfCloseEndTag:tag.close.punctuation { "/>" }
+  SelfCloseEndTag[style=bracket.angle.close] { "/>" }
 
   nameStart {
     ":" | std.asciiLetter | "_" |
-    [\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D] |
-    [\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}]
+    $[\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u02FF\u0370-\u037D\u037F-\u1FFF\u200C-\u200D] |
+    $[\u2070-\u218F\u2C00-\u2FEF\u3001-\uD7FF\uF900-\uFDCF\uFDF0-\uFFFD\u{10000}-\u{EFFFF}]
   }
 
   nameChar {
-    nameStart | "-" | "." | std.digit [\u00B7\u0300-\u036F\u203F-\u2040]
+    nameStart | "-" | "." | std.digit | $[\u00B7\u0300-\u036F\u203F-\u2040]
   }
 
   identifier { nameStart nameChar* }
 
-  tagName:tag.type.name { identifier }
+  TagName[style=name.type] { identifier }
   
-  mismatchedTagName:tag.mismatch.type.name.error { identifier }
+  MismatchedTagName[style=invalid.unexpected] { identifier }
 
-  attributeName:attribute.definition.property.name { identifier }
+  AttributeName[style=name.property] { identifier }
 
-  unquotedAttributeValue:attribute.string.literal.expression { [^ \t\n\r\u00a0=<>"'/]+ }
+  UnquotedAttributeValue[style=name.value] { ![ \t\n\r\u00a0=<>"'/]+ }
 
-  attributeContent { [^"&]+ }
+  attributeContent { !["&]+ }
 
-  is:equals.punctuation { "=" }
+  Is[style=operator.define] { "=" }
 
-  entityReference:entity.reference.expression { "&" [^#; ]+ ";" }
+  EntityReference[style=literal.character] { "&" ![#; ]+ ";" }
 
-  characterReference:character.reference.expression { "&#" [^; ]+ ";" }
+  CharacterReference[style=literal.character] { "&#" ![; ]+ ";" }
 
-  text:text.expression { [^<&]+ }
+  Text[style=markup.content] { ![<&]+ }
 
-  comment:block.comment { "<!--" commentContent }
+  Comment[style=comment.block] { "<!--" commentContent }
 
-  commentContent { [^\-] commentContent | "-" commentDash1 }
-  commentDash1 { [^\-] commentContent | "-" commentDash2 }
-  commentDash2 { [^\->] commentContent | "-" commentDash2 | ">" }
+  commentContent { ![\-] commentContent | "-" commentDash1 }
+  commentDash1 { ![\-] commentContent | "-" commentDash2 }
+  commentDash2 { ![\->] commentContent | "-" commentDash2 | ">" }
 
-  processingInst:processing.instruction.metadata { "<?" piContent }
+  ProcessingInst[style=meta.instruction] { "<?" piContent }
 
-  piContent { [^?] piContent | "?" piQuestion }
-  piQuestion { [^>] piContent | ">" }
+  piContent { ![?] piContent | "?" piQuestion }
+  piQuestion { ![>] piContent | ">" }
 
-  doctypeDecl:doctype.declaration.metadata { "<!" ("doctype" | "DOCTYPE") [^>]* ">" }
+  DoctypeDecl[style=meta.declaration] { "<!" ("doctype" | "DOCTYPE") ![>]* ">" }
 
-  @precedence { comment, processingInst, doctypeDecl }
+  @precedence { Comment, ProcessingInst, DoctypeDecl }
 
   space { (" " | "\t" | "\r" | "\n")+ }
-}
-
-@tags {
-  @export<raw, :raw.text.expression>
 }

@@ -2,13 +2,17 @@
 
 <foo/>
 
-==> element.expression(selfClosing.tag(tag.open, tag.type.name, tag.close))
+==>
+
+Document(Element(SelfClosingTag(StartTag,TagName,SelfCloseEndTag)))
 
 # Regular tag
 
 <foo>bar</foo>
 
-==> element.expression(opening.tag(tag.open, tag.type.name, tag.close), text.e, closing.tag(tag.open, tag.type.name, tag.close))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),Text,CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Nested tag
 
@@ -16,34 +20,54 @@
 
 ==>
 
-element.e(opening.t(tag.t),
-  element.e(opening.t(tag.t), text.e, closing.t(tag.t)),
-  element.e(selfClosing.t(tag.t)),
-closing.t(tag.t))
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Element(OpenTag(StartTag,TagName,EndTag),Text,CloseTag(StartCloseTag,TagName,EndTag)),
+  Element(SelfClosingTag(StartTag,TagName,SelfCloseEndTag)),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Attribute
 
 <a foo="bar"/>
 
-==> element.e(selfClosing.t(tag.t, attribute.definition.property.name, equals.punctuation, attribute.string.literal))
+==>
+
+Document(Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),SelfCloseEndTag)))
 
 # Multiple attributes
 
 <a x="one" y="two" z="three"></a>
 
-==> element.e(opening.t(tag.t, attribute.d, attribute.s, attribute.d, attribute.s, attribute.d, attribute.s), closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,
+  Attribute(AttributeName,Is,AttributeValue),
+  Attribute(AttributeName,Is,AttributeValue),
+  Attribute(AttributeName,Is,AttributeValue),EndTag),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Value-less attributes
 
 <a x y="one" z></a>
 
-==> element.e(opening.t(tag.t, attribute.d, attribute.d, attribute.s, attribute.d), closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,
+  Attribute(AttributeName),
+  Attribute(AttributeName,Is,AttributeValue),
+  Attribute(AttributeName),EndTag),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Unquoted attributes
 
 <a x=one y z=two></a>
 
-==> element.e(opening.t(tag.t, attribute.d, attribute.s, attribute.d, attribute.d, attribute.s), closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,
+  Attribute(AttributeName,Is,UnquotedAttributeValue),
+  Attribute(AttributeName),
+  Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Entities
 
@@ -51,7 +75,10 @@ closing.t(tag.t))
 
 ==>
 
-element.e(opening.t(tag.t, attribute.d, attribute.s(entity.reference)), entity.reference, character.reference, closing.t(tag.t))
+Document(Element(OpenTag(StartTag,TagName,
+  Attribute(AttributeName,Is,AttributeValue(EntityReference)),EndTag),
+  EntityReference,CharacterReference,
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Doctype
 
@@ -60,9 +87,7 @@ element.e(opening.t(tag.t, attribute.d, attribute.s(entity.reference)), entity.r
 
 ==>
 
-doctype.declaration.metadata,
-text.e,
-element.e(selfClosing.t(tag.t))
+Document(DoctypeDecl,Text,Element(SelfClosingTag(StartTag,TagName,SelfCloseEndTag)))
 
 # Processing instructions
 
@@ -70,8 +95,7 @@ element.e(selfClosing.t(tag.t))
 
 ==>
 
-processing.instruction.metadata,
-element.e(opening.t(tag.t), processing.instruction.metadata, closing.t(tag.t))
+Document(ProcessingInst,Element(OpenTag(StartTag,TagName,EndTag),ProcessingInst,CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Comments
 
@@ -80,27 +104,31 @@ element.e(opening.t(tag.t), processing.instruction.metadata, closing.t(tag.t))
 
 ==>
 
-block.comment,
-text.e,
-element.e(opening.t(tag.t), block.comment, text.e, closing.t(tag.t))
+Document(Comment,Text,Element(OpenTag(StartTag,TagName,EndTag),Comment,Text,CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Mismatched tag
 
 <a></b>
 
-==> element.e(opening.t(tag.t), closing.t(tag.mismatch))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),CloseTag(StartCloseTag,MismatchedTagName,EndTag)))
 
 # Unclosed tag
 
 <a>
 
-==> element.e(opening.t(tag.t), error)
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),⚠))
 
 # Unclosed implicitly closed tag
 
 <p>
 
-==> element.e(opening.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag)))
 
 # Nested mismatched tag
 
@@ -108,11 +136,11 @@ element.e(opening.t(tag.t), block.comment, text.e, closing.t(tag.t))
 
 ==>
 
-element.e(opening.t(tag.t),
-  element.e(opening.t(tag.t),
-    element.e(opening.t(tag.t), closing.t(tag.t)),
-    closing.t(tag.mismatch)),
-  closing.t(tag.t))
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Element(OpenTag(StartTag,TagName,EndTag),
+    Element(OpenTag(StartTag,TagName,EndTag),CloseTag(StartCloseTag,TagName,EndTag)),
+  CloseTag(StartCloseTag,MismatchedTagName,EndTag)),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Mismatched tag with whitespace
 
@@ -125,25 +153,31 @@ element.e(opening.t(tag.t),
 
 ==>
 
-element.e(opening.t(tag.t),
-  text.e,
-  element.e(opening.t(tag.t, attribute.d, attribute.s),
-    text.e
-    closing.t(tag.mismatch))
-  text.e,
-  closing.tag(tag.t))
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Text,
+  Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),EndTag),Text,CloseTag(StartCloseTag,MismatchedTagName,EndTag)),
+  Text,
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Self-closing tags
 
 <a><img src=blah></a>
 
-==> element.e(opening.t(tag.t), element.e(selfClosing.t(tag.t, attribute.d, attribute.s)), closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),SelfCloserEndTag)),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Implicitly closed
 
 <dl><dd>Hello</dl>
 
-==> element.e(opening.t(tag.t), element.e(opening.t(tag.t), text.e), closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Element(OpenTag(StartTag,TagName,EndTag),Text),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Closed by sibling
 
@@ -154,11 +188,11 @@ element.e(opening.t(tag.t),
 
 ==>
 
-element.e(opening.t(tag.t),
-  text.e,
-  element.e(opening.t(tag.t), text.e),
-  element.e(opening.t(tag.t), text.e),
-  closing.t(tag.t))
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Text,
+  Element(OpenTag(StartTag,TagName,EndTag),Text),
+  Element(OpenTag(StartTag,TagName,EndTag),Text),
+CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Closed by sibling at top
 
@@ -167,8 +201,7 @@ element.e(opening.t(tag.t),
 
 ==>
 
-element.e(opening.t(tag.t), text.e),
-element.e(opening.t(tag.t), text.e)
+Document(Element(OpenTag(StartTag,TagName,EndTag),Text),Element(OpenTag(StartTag,TagName,EndTag),Text))
 
 # Textarea
 
@@ -176,10 +209,18 @@ element.e(opening.t(tag.t), text.e)
   return "</bar>"
 }</textarea>
 
-==> element.e(opening.t(tag.t), text.e, element.e(opening.t(tag.t, attribute.d, attribute.s), raw.text.e, closing.t(tag.t)))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Text,
+  Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
+    RawText,
+  CloseTag(StartCloseTag,TagName,EndTag))))
 
 # Script
 
 <script>This is not an entity: &lt;</script>
 
-==> element.e(opening.t(tag.t), raw.text.e, closing.t(tag.t))
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),RawText,CloseTag(StartCloseTag,TagName,EndTag)))

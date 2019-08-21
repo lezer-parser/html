@@ -1,9 +1,9 @@
 /* Hand-written tokenizers for HTML. */
 
 import {ExternalTokenizer} from "lezer"
-import {startTag, startCloseTag, mismatchedStartCloseTag, missingCloseTag,
-        selfClosingEndTag,
-        element, openingTag, selfClosingTag} from "./parser.terms.js"
+import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
+        SelfCloserEndTag,
+        Element, OpenTag, SelfClosingTag} from "./parser.terms.js"
 
 const selfClosers = {
   area: true, base: true, br: true, col: true, command: true,
@@ -53,7 +53,7 @@ const lessThan = 60, greaterThan = 62, slash = 47, question = 63, bang = 33
 
 const tagStartExpr = /^<\s*([\.\-\:\w\xa1-\uffff]+)/
 
-const elementQuery = [element]
+const elementQuery = [Element]
 
 export const tagStart = new ExternalTokenizer((input, token, stack) => {
   let pos = token.start, first = input.get(pos)
@@ -79,19 +79,19 @@ export const tagStart = new ExternalTokenizer((input, token, stack) => {
     if (match) {
       let contextName = match[1].toLowerCase()
       if (close && name != contextName)
-        return implicitlyClosed[contextName] ? token.accept(missingCloseTag, token.start) : token.accept(mismatchedStartCloseTag, tokEnd)
+        return implicitlyClosed[contextName] ? token.accept(missingCloseTag, token.start) : token.accept(MismatchedStartCloseTag, tokEnd)
       if (!close && closeOnOpen[contextName] && closeOnOpen[contextName][name])
         return token.accept(missingCloseTag, token.start)
     }
   }
-  token.accept(close ? startCloseTag : startTag, tokEnd)
+  token.accept(close ? StartCloseTag : StartTag, tokEnd)
 }, {contextual: true})
 
-const tagQuery = [openingTag, selfClosingTag]
+const tagQuery = [OpenTag, SelfClosingTag]
 
 export const selfClosed = new ExternalTokenizer((input, token, stack) => {
   if (input.get(token.start) != greaterThan) return
   let from = stack.startOf(tagQuery)
   let match = from < 0 ? null : tagStartExpr.exec(input.read(from, token.start))
-  if (match && selfClosers[match[1].toLowerCase()]) token.accept(selfClosingEndTag, token.start + 1)
+  if (match && selfClosers[match[1].toLowerCase()]) token.accept(SelfCloserEndTag, token.start + 1)
 }, {contextual: true})
