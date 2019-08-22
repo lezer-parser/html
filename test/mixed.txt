@@ -36,4 +36,4 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),
   Element(OpenTag(StartTag,TagName,EndTag),
-    Script(ExpressionStatement(Null)),⚠),⚠))
+    Script(ExpressionStatement(null)),⚠),⚠))

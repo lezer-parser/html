@@ -27,25 +27,25 @@ Attribute {
   AttributeName space* (Is space* (AttributeValue | UnquotedAttributeValue) space*)?
 }
 
-AttributeValue[style=literal.string] { "\"" (attributeContent | EntityReference | CharacterReference)* "\"" }
+AttributeValue { "\"" (attributeContent | EntityReference | CharacterReference)* "\"" }
 
-@export RawText[style=markup.content] {}
+@export RawText {}
 
 @external tokens tagStart from "./tokens.js" {
-  StartTag[style=bracket.angle.open],
-  StartCloseTag[style=bracket.angle.open],
-  MismatchedStartCloseTag[name=StartCloseTag,style=bracket.angle.open],
+  StartTag,
+  StartCloseTag,
+  MismatchedStartCloseTag[name=StartCloseTag],
   missingCloseTag
 }
 
 @external tokens selfClosed from "./tokens.js" {
-  SelfCloserEndTag[style=bracket.angle.close]
+  SelfCloserEndTag
 }
 
 @tokens {
-  EndTag[style=bracket.angle.close] { ">" }
+  EndTag { ">" }
 
-  SelfCloseEndTag[style=bracket.angle.close] { "/>" }
+  SelfCloseEndTag { "/>" }
 
   nameStart {
     ":" | std.asciiLetter | "_" |
@@ -59,36 +59,36 @@ AttributeValue[style=literal.string] { "\"" (attributeContent | EntityReference 
 
   identifier { nameStart nameChar* }
 
-  TagName[style=name.type] { identifier }
+  TagName { identifier }
   
-  MismatchedTagName[style=invalid.unexpected] { identifier }
+  MismatchedTagName { identifier }
 
-  AttributeName[style=name.property] { identifier }
+  AttributeName { identifier }
 
-  UnquotedAttributeValue[style=name.value] { ![ \t\n\r\u00a0=<>"'/]+ }
+  UnquotedAttributeValue { ![ \t\n\r\u00a0=<>"'/]+ }
 
   attributeContent { !["&]+ }
 
-  Is[style=operator.define] { "=" }
+  Is { "=" }
 
-  EntityReference[style=literal.character] { "&" ![#; ]+ ";" }
+  EntityReference { "&" ![#; ]+ ";" }
 
-  CharacterReference[style=literal.character] { "&#" ![; ]+ ";" }
+  CharacterReference { "&#" ![; ]+ ";" }
 
-  Text[style=markup.content] { ![<&]+ }
+  Text { ![<&]+ }
 
-  Comment[style=comment.block] { "<!--" commentContent }
+  Comment { "<!--" commentContent }
 
   commentContent { ![\-] commentContent | "-" commentDash1 }
   commentDash1 { ![\-] commentContent | "-" commentDash2 }
   commentDash2 { ![\->] commentContent | "-" commentDash2 | ">" }
 
-  ProcessingInst[style=meta.instruction] { "<?" piContent }
+  ProcessingInst { "<?" piContent }
 
   piContent { ![?] piContent | "?" piQuestion }
   piQuestion { ![>] piContent | ">" }
 
-  DoctypeDecl[style=meta.declaration] { "<!" ("doctype" | "DOCTYPE") ![>]* ">" }
+  DoctypeDecl { "<!" ("doctype" | "DOCTYPE") ![>]* ">" }
 
   @precedence { Comment, ProcessingInst, DoctypeDecl }
 
