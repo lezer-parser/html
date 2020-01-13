@@ -224,3 +224,19 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),
 ==>
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),RawText,CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Allows whitespace in tags
+
+<
+  body
+    foo=bar
+  >hi<
+ /body
+ >
+
+==>
+
+Document(Element(
+  OpenTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
+  Text,
+  CloseTag(StartCloseTag,TagName,EndTag)))

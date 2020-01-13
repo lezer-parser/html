@@ -65,11 +65,13 @@ export const tagStart = new ExternalTokenizer((input, token, stack) => {
   }
   if (first != lessThan) return
   pos++
-  let next = input.get(pos), close = false
-  if (next == slash) { close = true; pos++ }
-  if (next == question || next == bang) return
-  let tokEnd = pos
-  while (isSpace(input.get(pos))) pos++
+  let close = false, tokEnd = pos
+  for (let next; next = input.get(pos);) {
+    if (next == slash && !close) { close = true; pos++; tokEnd = pos }
+    else if (next == question || next == bang) return
+    else if (isSpace(next)) pos++
+    else break
+  }
   let nameStart = pos
   while (nameChar(input.get(pos))) pos++
   if (pos > nameStart) {
@@ -79,7 +81,8 @@ export const tagStart = new ExternalTokenizer((input, token, stack) => {
     if (match) {
       let contextName = match[1].toLowerCase()
       if (close && name != contextName)
-        return implicitlyClosed[contextName] ? token.accept(missingCloseTag, token.start) : token.accept(MismatchedStartCloseTag, tokEnd)
+        return implicitlyClosed[contextName] ? token.accept(missingCloseTag, token.start)
+          : token.accept(MismatchedStartCloseTag, tokEnd)
       if (!close && closeOnOpen[contextName] && closeOnOpen[contextName][name])
         return token.accept(missingCloseTag, token.start)
     }
