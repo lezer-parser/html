@@ -1,3 +1,9 @@
+## 0.5.2 (2020-01-15)
+
+### Bug fixes
+
+Allow whitespace between the `<` and `/` in a close tag.
+
 ## 0.5.1 (2019-10-22)
 
 ### Bug fixes
