@@ -1,4 +1,4 @@
-@top[name=Document] { (entity | DoctypeDecl)+ }
+@top Document { (entity | DoctypeDecl)+ }
 
 @external grammar elementContent from "./content.js"
 
