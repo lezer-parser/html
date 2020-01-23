@@ -37,3 +37,13 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 Document(Element(OpenTag(StartTag,TagName,EndTag),
   Element(OpenTag(StartTag,TagName,EndTag),
     Script(ExpressionStatement(null)),⚠),⚠))
+
+# Error in JS
+
+<script>a b</script>
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Script(...),
+CloseTag(StartCloseTag,TagName,EndTag)))
