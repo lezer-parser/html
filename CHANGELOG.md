@@ -1,3 +1,9 @@
+## 0.8.0 (2020-02-03)
+
+### New features
+
+Follow 0.8.0 release of the library.
+
 ## 0.7.0 (2020-01-20)
 
 ### Breaking changes
