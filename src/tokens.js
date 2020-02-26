@@ -2,7 +2,7 @@
 
 import {ExternalTokenizer} from "lezer"
 import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
-        SelfCloserEndTag,
+        SelfCloseEndTag,
         Element, OpenTag, SelfClosingTag} from "./parser.terms.js"
 
 const selfClosers = {
@@ -93,8 +93,14 @@ export const tagStart = new ExternalTokenizer((input, token, stack) => {
 const tagQuery = [OpenTag, SelfClosingTag]
 
 export const selfClosed = new ExternalTokenizer((input, token, stack) => {
-  if (input.get(token.start) != greaterThan) return
+  let next = input.get(token.start), end = token.start + 1
+  if (next == slash) {
+    if (input.get(end) != greaterThan) return
+    end++
+  } else if (next != greaterThan) {
+    return
+  }
   let from = stack.startOf(tagQuery)
   let match = from < 0 ? null : tagStartExpr.exec(input.read(from, token.start))
-  if (match && selfClosers[match[1].toLowerCase()]) token.accept(SelfCloserEndTag, token.start + 1)
+  if (match && selfClosers[match[1].toLowerCase()]) token.accept(SelfCloseEndTag, end)
 }, {contextual: true})

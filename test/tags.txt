@@ -1,11 +1,3 @@
-# Self-closing tag
-
-<foo/>
-
-==>
-
-Document(Element(SelfClosingTag(StartTag,TagName,SelfCloseEndTag)))
-
 # Regular tag
 
 <foo>bar</foo>
@@ -16,7 +8,7 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),Text,CloseTag(StartCloseTag,Ta
 
 # Nested tag
 
-<a><b>c</b><d/></a>
+<a><b>c</b><br></a>
 
 ==>
 
@@ -27,7 +19,7 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Attribute
 
-<a foo="bar"/>
+<br foo="bar">
 
 ==>
 
@@ -69,6 +61,17 @@ Document(Element(OpenTag(StartTag,TagName,
   Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
 CloseTag(StartCloseTag,TagName,EndTag)))
 
+# Single-quoted attributes
+
+<link x='one' z='two&amp;'>
+
+==>
+
+Document(Element(SelfClosingTag(StartTag, TagName,
+  Attribute(AttributeName, Is, AttributeValue),
+  Attribute(AttributeName, Is, AttributeValue(EntityReference)),
+SelfCloseEndTag)))
+
 # Entities
 
 <a attr="one&amp;two">&amp;&#67;</a>
@@ -83,11 +86,11 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 # Doctype
 
 <!doctype html>
-<doc/>
+<doc></doc>
 
 ==>
 
-Document(DoctypeDecl,Text,Element(SelfClosingTag(StartTag,TagName,SelfCloseEndTag)))
+Document(DoctypeDecl,Text,Element(OpenTag(StartTag,TagName,EndTag),CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Processing instructions
 
@@ -121,6 +124,14 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),CloseTag(StartCloseTag,Mismatc
 ==>
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),⚠))
+
+# Ignore pseudo-xml self-closers
+
+<br/>
+
+==>
+
+Document(Element(SelfClosingTag(StartTag,TagName,SelfCloseEndTag)))
 
 # Unclosed implicitly closed tag
 
@@ -166,7 +177,7 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 ==>
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),
-  Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),SelfCloserEndTag)),
+  Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),SelfCloseEndTag)),
 CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Implicitly closed
