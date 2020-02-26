@@ -1,3 +1,11 @@
+## 0.8.1 (2020-02-26)
+
+### Bug fixes
+
+Adds support for single-quoted attribute values.
+
+Don't treat /> tag ends as self-closing, just ignore them instead.
+
 ## 0.8.0 (2020-02-03)
 
 ### New features
