@@ -3,6 +3,7 @@
   "version": "0.8.1",
   "description": "lezer-based HTML grammar",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "author": "Marijn Haverbeke <marijnh@gmail.com>",
   "license": "MIT",
   "devDependencies": {
