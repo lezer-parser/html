@@ -1,9 +1,11 @@
-const {parser, configureHTML} = require("../dist/index")
-const {parser: jsParser} = require("lezer-javascript")
-const {fileTests} = require("lezer-generator/dist/test.js")
+import {parser, configureHTML} from "../dist/index.es.js"
+import {parser as jsParser} from "lezer-javascript"
+import {fileTests} from "lezer-generator/dist/test"
 
-let fs = require("fs"), path = require("path")
-let caseDir = __dirname
+import * as fs from "fs"
+import * as path from "path"
+import { fileURLToPath } from 'url';
+let caseDir = path.dirname(fileURLToPath(import.meta.url))
 
 let mixed = configureHTML([{
   tag: "script",
