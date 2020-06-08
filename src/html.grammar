@@ -9,7 +9,7 @@ Element {
   SelfClosingTag
 }
 
-OpenTag {
+OpenTag[closedBy=CloseTag] {
   StartTag space* TagName space* Attribute* EndTag
 }
 
@@ -17,7 +17,7 @@ SelfClosingTag {
   StartTag space* TagName space* Attribute* SelfCloseEndTag
 }
 
-CloseTag {
+CloseTag[openedBy=OpenTag] {
   (StartCloseTag space* TagName |
    MismatchedStartCloseTag space* MismatchedTagName)
   space* EndTag
@@ -35,18 +35,18 @@ AttributeValue {
 @export RawText {}
 
 @external tokens tagStart from "./tokens.js" {
-  StartTag,
-  StartCloseTag,
+  StartTag[closedBy="EndTag SelfCloseEndTag"],
+  StartCloseTag[closedBy="EndTag SelfCloseEndTag"],
   MismatchedStartCloseTag[name=StartCloseTag],
   missingCloseTag
 }
 
 @external tokens selfClosed from "./tokens.js" {
-  SelfCloseEndTag
+  SelfCloseEndTag[openedBy="StartTag"]
 }
 
 @tokens {
-  EndTag { "/"? ">" }
+  EndTag[openedBy="StartTag StartCloseTag"] { "/"? ">" }
 
   nameStart {
     ":" | std.asciiLetter | "_" |
