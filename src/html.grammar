@@ -37,7 +37,7 @@ AttributeValue {
 @external tokens tagStart from "./tokens.js" {
   StartTag[closedBy="EndTag SelfCloseEndTag"],
   StartCloseTag[closedBy="EndTag SelfCloseEndTag"],
-  MismatchedStartCloseTag[name=StartCloseTag],
+  MismatchedStartCloseTag[@name=StartCloseTag],
   missingCloseTag
 }
 
