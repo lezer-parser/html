@@ -32,7 +32,7 @@ AttributeValue {
   "\'" (attributeContentSingle | EntityReference | CharacterReference)* "\'"
 }
 
-@export RawText {}
+RawText[@export] {}
 
 @external tokens tagStart from "./tokens.js" {
   StartTag[closedBy="EndTag SelfCloseEndTag"],
