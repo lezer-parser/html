@@ -2,7 +2,7 @@
 
 import {ExternalTokenizer} from "lezer"
 import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
-        SelfCloseEndTag,
+        SelfCloseEndTag, IncompleteCloseTag,
         Element, OpenTag, SelfClosingTag} from "./parser.terms.js"
 
 const selfClosers = {
@@ -53,14 +53,21 @@ const lessThan = 60, greaterThan = 62, slash = 47, question = 63, bang = 33
 
 const tagStartExpr = /^<\s*([\.\-\:\w\xa1-\uffff]+)/
 
-const elementQuery = [Element]
+let elementQuery = [Element], openAt = 0
+
+function parentElement(input, stack, pos, len) {
+  openAt = stack.startOf(elementQuery, pos)
+  if (openAt == null) return null
+  let match = tagStartExpr.exec(input.read(openAt, openAt + len + 10))
+  return match ? match[1].toLowerCase() : ""
+}
 
 export const tagStart = new ExternalTokenizer((input, token, stack) => {
   let pos = token.start, first = input.get(pos)
   // End of file, just close anything
   if (first < 0) {
     let contextStart = stack.startOf(elementQuery)
-    let match = contextStart < 0 ? null : tagStartExpr.exec(input.read(contextStart, contextStart + 30))
+    let match = contextStart == null ? null : tagStartExpr.exec(input.read(contextStart, contextStart + 30))
     if (match && implicitlyClosed[match[1].toLowerCase()]) token.accept(missingCloseTag, token.start)
   }
   if (first != lessThan) return
@@ -74,20 +81,23 @@ export const tagStart = new ExternalTokenizer((input, token, stack) => {
   }
   let nameStart = pos
   while (nameChar(input.get(pos))) pos++
-  if (pos > nameStart) {
-    let name = input.read(nameStart, pos).toLowerCase()
-    let contextStart = stack.startOf(elementQuery)
-    let match = contextStart < 0 ? null : tagStartExpr.exec(input.read(contextStart, contextStart + name.length + 10))
-    if (match) {
-      let contextName = match[1].toLowerCase()
-      if (close && name != contextName)
-        return implicitlyClosed[contextName] ? token.accept(missingCloseTag, token.start)
-          : token.accept(MismatchedStartCloseTag, tokEnd)
-      if (!close && closeOnOpen[contextName] && closeOnOpen[contextName][name])
-        return token.accept(missingCloseTag, token.start)
+  if (pos == nameStart) return token.accept(close ? IncompleteCloseTag : StartTag, tokEnd)
+
+  let name = input.read(nameStart, pos).toLowerCase()
+  let parent = parentElement(input, stack, stack.pos, name.length)
+  if (close) {
+    if (name == parent) return token.accept(StartCloseTag, tokEnd)
+    if (implicitlyClosed[parent]) return token.accept(missingCloseTag, token.start)
+    while (parent != null) {
+      parent = parentElement(input, stack, openAt - 1, name.length)
+      if (parent == name) return
     }
+    token.accept(MismatchedStartCloseTag, tokEnd)
+  } else {
+    if (parent && closeOnOpen[parent] && closeOnOpen[parent][name])
+      return token.accept(missingCloseTag, token.start)
+    token.accept(StartTag, tokEnd)
   }
-  token.accept(close ? StartCloseTag : StartTag, tokEnd)
 }, {contextual: true})
 
 const tagQuery = [OpenTag, SelfClosingTag]
@@ -101,6 +111,6 @@ export const selfClosed = new ExternalTokenizer((input, token, stack) => {
     return
   }
   let from = stack.startOf(tagQuery)
-  let match = from < 0 ? null : tagStartExpr.exec(input.read(from, token.start))
+  let match = from == null ? null : tagStartExpr.exec(input.read(from, token.start))
   if (match && selfClosers[match[1].toLowerCase()]) token.accept(SelfCloseEndTag, end)
 }, {contextual: true})

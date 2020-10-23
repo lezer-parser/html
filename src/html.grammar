@@ -2,7 +2,16 @@
 
 @external grammar elementContent from "./content.js"
 
-entity { Text | EntityReference | CharacterReference | Element | Comment | ProcessingInst }
+entity {
+  Text |
+  EntityReference |
+  CharacterReference |
+  Element |
+  Comment |
+  ProcessingInst |
+  IncompleteCloseTag |
+  MismatchedCloseTag
+}
 
 Element {
   OpenTag nest.elementContent<"</" space* identifier space* ">", entity*> (CloseTag | missingCloseTag) |
@@ -17,10 +26,12 @@ SelfClosingTag {
   StartTag space* TagName space* Attribute* SelfCloseEndTag
 }
 
+MismatchedCloseTag {
+  MismatchedStartCloseTag space* TagName space* EndTag
+}
+
 CloseTag[openedBy=OpenTag] {
-  (StartCloseTag space* TagName |
-   MismatchedStartCloseTag space* MismatchedTagName)
-  space* EndTag
+  StartCloseTag space* TagName space* EndTag
 }
 
 Attribute {
@@ -38,7 +49,8 @@ RawText[@export] {}
   StartTag[closedBy="EndTag SelfCloseEndTag"],
   StartCloseTag[closedBy="EndTag SelfCloseEndTag"],
   MismatchedStartCloseTag[@name=StartCloseTag],
-  missingCloseTag
+  missingCloseTag,
+  IncompleteCloseTag
 }
 
 @external tokens selfClosed from "./tokens.js" {
@@ -62,8 +74,6 @@ RawText[@export] {}
 
   TagName { identifier }
   
-  MismatchedTagName { identifier }
-
   AttributeName { identifier }
 
   UnquotedAttributeValue { ![ \t\n\r\u00a0=<>"'/]+ }

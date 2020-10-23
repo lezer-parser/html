@@ -115,7 +115,7 @@ Document(Comment,Text,Element(OpenTag(StartTag,TagName,EndTag),Comment,Text,Clos
 
 ==>
 
-Document(Element(OpenTag(StartTag,TagName,EndTag),CloseTag(StartCloseTag,MismatchedTagName,EndTag)))
+Document(Element(OpenTag(StartTag,TagName,EndTag),MismatchedCloseTag(StartCloseTag,TagName,EndTag),⚠))
 
 # Unclosed tag
 
@@ -150,8 +150,9 @@ Document(Element(OpenTag(StartTag,TagName,EndTag)))
 Document(Element(OpenTag(StartTag,TagName,EndTag),
   Element(OpenTag(StartTag,TagName,EndTag),
     Element(OpenTag(StartTag,TagName,EndTag),CloseTag(StartCloseTag,TagName,EndTag)),
-  CloseTag(StartCloseTag,MismatchedTagName,EndTag)),
-CloseTag(StartCloseTag,TagName,EndTag)))
+    MismatchedCloseTag(StartCloseTag,TagName,EndTag),
+    ⚠),
+  CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Mismatched tag with whitespace
 
@@ -166,9 +167,45 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),
   Text,
-  Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),EndTag),Text,CloseTag(StartCloseTag,MismatchedTagName,EndTag)),
-  Text,
-CloseTag(StartCloseTag,TagName,EndTag)))
+  Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),EndTag),
+    Text,
+    MismatchedCloseTag(StartCloseTag,TagName,EndTag),
+    Text, ⚠),
+  CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Incomplete close tag
+
+<html><body></</html>
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Element(OpenTag(StartTag,TagName,EndTag), IncompleteCloseTag, ⚠),
+  CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Re-synchronize close tags
+
+<a><b><c></x></c></a>
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Element(OpenTag(StartTag,TagName,EndTag),
+    Element(OpenTag(StartTag,TagName,EndTag),
+      MismatchedCloseTag(StartCloseTag,TagName,EndTag),
+      CloseTag(StartCloseTag,TagName,EndTag)),
+    ⚠),
+  CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Top-level mismatched close tag
+
+<a></a></a>
+
+==>
+
+Document(
+  Element(OpenTag(StartTag,TagName,EndTag),CloseTag(StartCloseTag,TagName,EndTag)),
+  MismatchedCloseTag(StartCloseTag,TagName,EndTag))
 
 # Self-closing tags
 
