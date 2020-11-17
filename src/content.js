@@ -17,15 +17,12 @@ function attributes(tag) {
   return attrs
 }
 
-const stay = {stay: true}
-
 function skip(name) { return token => tagName(token) == name }
 
 // tags: {
 //   tag: string,
 //   attrs?: ({[attr: string]: string}) => boolean,
-//   parser?: Parser,
-//   parseNode?: (input: InputStream, start: number) => Tree
+//   parser: Parser | (input: Input, pos: number, fragments?: readonly TreeFragment[]) => IncrementalParser,
 // }[]
 
 function resolveContent(tags) {
@@ -36,15 +33,16 @@ function resolveContent(tags) {
       attrs: tag.attrs,
       value: {
         filterEnd: skip(tag.tag),
-        parser: tag.parser,
-        parseNode: tag.parseNode
+        parser: typeof tag.parser == "function" ? tag.parser : (input, startPos, fragments) => {
+          return tag.parser.startParse(input, {startPos, fragments})
+        }
       }
     })
   }
   return function(input, stack) {
     let openTag = input.read(stack.ruleStart, stack.pos)
     let name = tagName(openTag), matches, attrs
-    if (!name) return stay
+    if (!name) return null
     if (tagMap && (matches = tagMap[name])) {
       for (let match of matches) {
         if (!match.attrs || match.attrs(attrs || (attrs = attributes(openTag)))) return match.value
@@ -54,7 +52,7 @@ function resolveContent(tags) {
       filterEnd: skip(name),
       wrapType: RawText
     }
-    return stay
+    return null
   }
 }
 
