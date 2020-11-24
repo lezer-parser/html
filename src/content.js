@@ -22,7 +22,7 @@ function skip(name) { return token => tagName(token) == name }
 // tags: {
 //   tag: string,
 //   attrs?: ({[attr: string]: string}) => boolean,
-//   parser: Parser | (input: Input, pos: number, fragments?: readonly TreeFragment[]) => IncrementalParser,
+//   parser: IncrementalParser
 // }[]
 
 function resolveContent(tags) {
@@ -33,9 +33,7 @@ function resolveContent(tags) {
       attrs: tag.attrs,
       value: {
         filterEnd: skip(tag.tag),
-        parser: typeof tag.parser == "function" ? tag.parser : (input, startPos, fragments) => {
-          return tag.parser.startParse(input, {startPos, fragments})
-        }
+        parser: tag.parser
       }
     })
   }
@@ -58,6 +56,6 @@ function resolveContent(tags) {
 
 export const elementContent = resolveContent([])
 
-export function configureTags(parser, tags) {
-  return parser.configure({nested: {elementContent: resolveContent(tags)}})
+export function configureNesting(tags) {
+  return {elementContent: resolveContent(tags)}
 }
