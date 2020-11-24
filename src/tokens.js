@@ -2,8 +2,8 @@
 
 import {ExternalTokenizer} from "lezer"
 import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
-        SelfCloseEndTag, IncompleteCloseTag,
-        Element, OpenTag, SelfClosingTag} from "./parser.terms.js"
+        SelfCloseEndTag, IncompleteCloseTag, Element, OpenTag, SelfClosingTag,
+        Dialect_noMatch} from "./parser.terms.js"
 
 const selfClosers = {
   area: true, base: true, br: true, col: true, command: true,
@@ -88,6 +88,7 @@ export const tagStart = new ExternalTokenizer((input, token, stack) => {
   if (close) {
     if (name == parent) return token.accept(StartCloseTag, tokEnd)
     if (implicitlyClosed[parent]) return token.accept(missingCloseTag, token.start)
+    if (stack.dialectEnabled(Dialect_noMatch)) return token.accept(StartCloseTag, tokEnd)
     while (parent != null) {
       parent = parentElement(input, stack, openAt - 1, name.length)
       if (parent == name) return

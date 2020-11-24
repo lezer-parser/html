@@ -2,6 +2,8 @@
 
 @external grammar elementContent from "./content.js"
 
+@dialects { noMatch }
+
 entity {
   Text |
   EntityReference |
