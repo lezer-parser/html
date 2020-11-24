@@ -59,5 +59,5 @@ function resolveContent(tags) {
 export const elementContent = resolveContent([])
 
 export function configureTags(parser, tags) {
-  return parser.withNested({elementContent: resolveContent(tags)})
+  return parser.configure({nested: {elementContent: resolveContent(tags)}})
 }
