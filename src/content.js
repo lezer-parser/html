@@ -22,7 +22,7 @@ function skip(name) { return token => tagName(token) == name }
 // tags: {
 //   tag: string,
 //   attrs?: ({[attr: string]: string}) => boolean,
-//   parser: IncrementalParser
+//   parser: {startParse: (input: Input, startPos?: number, context?: ParseContext) => IncrementalParse}
 // }[]
 
 function resolveContent(tags) {
@@ -33,7 +33,7 @@ function resolveContent(tags) {
       attrs: tag.attrs,
       value: {
         filterEnd: skip(tag.tag),
-        parser: tag.parser
+        startParse: tag.parser.startParse.bind(tag.parser)
       }
     })
   }

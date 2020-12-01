@@ -1,11 +1,10 @@
-import {Parser, Input, Tree, IncrementalParser, NestedParser} from "lezer"
-import {TreeFragment} from "lezer-tree"
+import {Parser, NestedParser} from "lezer"
+import {Input, ParseContext, PartialParse} from "lezer-tree"
 
 export const parser: Parser
 
 export function configureNesting(tags: {
   tag: string,
   attrs?: (attrs: {[attr: string]: string}) => boolean,
-  parser?: Parser | ((input: Input, pos: number, fragments?: readonly TreeFragment[]) => IncrementalParser),
-  parseNode?: (input: Input, start: number) => Tree
+  parser: {startParse: (input: Input, startPos: number, context: ParseContext) => PartialParse}
 }[]): {[name: string]: NestedParser}
