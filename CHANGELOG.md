@@ -1,3 +1,13 @@
+## 0.13.0 (2020-12-04)
+
+### Breaking changes
+
+The nested parser configuration utility is now called `configureNesting`, and returns an object to pass to `Parser.configure`'s `nested` option instead of a new parser.
+
+### New features
+
+The parser can now be given a "noMatch" dialect to not mark mismatched tags.
+
 ## 0.12.0 (2020-10-23)
 
 ### Breaking changes
