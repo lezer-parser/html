@@ -1,3 +1,9 @@
+## 0.13.2 (2021-01-22)
+
+### Bug fixes
+
+Make comments consist of multiple tokens, so that huge comments don't freeze the parser.
+
 ## 0.13.1 (2020-12-04)
 
 ### Bug fixes
