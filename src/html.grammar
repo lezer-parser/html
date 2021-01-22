@@ -45,6 +45,8 @@ AttributeValue {
   "\'" (attributeContentSingle | EntityReference | CharacterReference)* "\'"
 }
 
+Comment { commentStart commentContent* commentEnd }
+
 RawText[@export] {}
 
 @external tokens tagStart from "./tokens.js" {
@@ -57,6 +59,10 @@ RawText[@export] {}
 
 @external tokens selfClosed from "./tokens.js" {
   SelfCloseEndTag[openedBy="StartTag"]
+}
+
+@external tokens commentContent from "./tokens.js" {
+  commentContent
 }
 
 @tokens {
@@ -92,11 +98,8 @@ RawText[@export] {}
 
   Text { ![<&]+ }
 
-  Comment { "<!--" commentContent }
-
-  commentContent { ![\-] commentContent | "-" commentDash1 }
-  commentDash1 { ![\-] commentContent | "-" commentDash2 }
-  commentDash2 { ![\->] commentContent | "-" commentDash2 | ">" }
+  commentStart { "<!--" }
+  commentEnd { "-->" }
 
   ProcessingInst { "<?" piContent }
 
@@ -105,7 +108,7 @@ RawText[@export] {}
 
   DoctypeDecl { "<!" ("doctype" | "DOCTYPE") ![>]* ">" }
 
-  @precedence { Comment, ProcessingInst, DoctypeDecl }
+  @precedence { commentStart, ProcessingInst, DoctypeDecl }
 
   space { (" " | "\t" | "\r" | "\n")+ }
 }

@@ -3,7 +3,7 @@
 import {ExternalTokenizer} from "lezer"
 import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
         SelfCloseEndTag, IncompleteCloseTag, Element, OpenTag, SelfClosingTag,
-        Dialect_noMatch} from "./parser.terms.js"
+        Dialect_noMatch, commentContent as cmntContent} from "./parser.terms.js"
 
 const selfClosers = {
   area: true, base: true, br: true, col: true, command: true,
@@ -115,3 +115,19 @@ export const selfClosed = new ExternalTokenizer((input, token, stack) => {
   let match = from == null ? null : tagStartExpr.exec(input.read(from, token.start))
   if (match && selfClosers[match[1].toLowerCase()]) token.accept(SelfCloseEndTag, end)
 }, {contextual: true})
+
+export const commentContent = new ExternalTokenizer((input, token, stack) => {
+  let pos = token.start, endPos = 0
+  for (;;) {
+    let next = input.get(pos)
+    if (next < 0) break
+    pos++
+    if (next == "-->".charCodeAt(endPos)) {
+      endPos++
+      if (endPos == 3) { pos -= 3; break }
+    } else {
+      endPos = 0
+    }
+  }
+  if (pos > token.start) token.accept(cmntContent, pos)
+})
