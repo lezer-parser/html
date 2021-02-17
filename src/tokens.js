@@ -110,7 +110,7 @@ export const tagStart = new ExternalTokenizer((input, token, stack) => {
     if (parent && closeOnOpen[parent] && closeOnOpen[parent][name]) token.accept(missingCloseTag, token.start)
     else token.accept(StartTag, pos)
   }
-}, {contextual: true})
+})
 
 export const selfClosed = new ExternalTokenizer((input, token, stack) => {
   let next = input.get(token.start), end = token.start + 1
@@ -121,7 +121,7 @@ export const selfClosed = new ExternalTokenizer((input, token, stack) => {
     return
   }
   if (stack.context && selfClosers[stack.context.name]) token.accept(SelfCloseEndTag, end)
-}, {contextual: true})
+})
 
 export const commentContent = new ExternalTokenizer((input, token) => {
   let pos = token.start, endPos = 0
