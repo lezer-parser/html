@@ -83,7 +83,9 @@ export const elementContext = new ContextTracker({
     return type == StartTag || type == OpenTag
       ? new ElementContext(tagNameAfter(input, stack.pos - node.length + 1) || "", context) : context
   },
-  hash(context) { return context ? context.hash : 0 }
+  // Always returns 0 to avoid interfering with reuse. May not be safe
+  // but I haven't found a counterexample yet.
+  hash() { return 0 }
 })
 
 export const tagStart = new ExternalTokenizer((input, token, stack) => {
