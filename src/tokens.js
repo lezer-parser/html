@@ -2,7 +2,7 @@
 
 import {ExternalTokenizer, ContextTracker} from "lezer"
 import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
-        SelfCloseEndTag, IncompleteCloseTag, Element,
+        SelfCloseEndTag, IncompleteCloseTag, Element, OpenTag,
         Dialect_noMatch, commentContent as cmntContent} from "./parser.terms.js"
 
 const selfClosers = {
@@ -73,11 +73,15 @@ function ElementContext(name, parent) {
 export const elementContext = new ContextTracker({
   start: null,
   shift(context, term, input, stack) {
-    let name
-    return term == StartTag && (name = tagNameAfter(input, stack.pos)) ? new ElementContext(name, context) : context
+    return term == StartTag ? new ElementContext(tagNameAfter(input, stack.pos) || "", context) : context
   },
   reduce(context, term) {
     return term == Element && context ? context.parent : context
+  },
+  reuse(context, node, input, stack) {
+    let type = node.type.id
+    return type == StartTag || type == OpenTag
+      ? new ElementContext(tagNameAfter(input, stack.pos - node.length + 1) || "", context) : context
   },
   hash(context) { return context ? context.hash : 0 }
 })
@@ -101,10 +105,8 @@ export const tagStart = new ExternalTokenizer((input, token, stack) => {
     for (let cx = stack.context; cx; cx = cx.parent) if (cx.name == name) return
     token.accept(MismatchedStartCloseTag, pos)
   } else {
-    if (parent && closeOnOpen[parent] && closeOnOpen[parent][name])
-      token.accept(missingCloseTag, token.start)
-    else
-      token.accept(StartTag, pos)
+    if (parent && closeOnOpen[parent] && closeOnOpen[parent][name]) token.accept(missingCloseTag, token.start)
+    else token.accept(StartTag, pos)
   }
 }, {contextual: true})
 
