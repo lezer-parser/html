@@ -115,7 +115,7 @@ Document(Comment,Text,Element(OpenTag(StartTag,TagName,EndTag),Comment,Text,Clos
 
 ==>
 
-Document(Element(OpenTag(StartTag,TagName,EndTag),MismatchedCloseTag(StartCloseTag,TagName,EndTag),⚠))
+Document(Element(OpenTag(StartTag,TagName,EndTag),MismatchedCloseTag(StartCloseTag,TagName,EndTag)))
 
 # Unclosed tag
 
@@ -123,7 +123,7 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),MismatchedCloseTag(StartCloseT
 
 ==>
 
-Document(Element(OpenTag(StartTag,TagName,EndTag),⚠))
+Document(Element(OpenTag(StartTag,TagName,EndTag)))
 
 # Ignore pseudo-xml self-closers
 
@@ -278,8 +278,8 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),RawText,CloseTag(StartCloseTag
 <
   body
     foo=bar
-  >hi<
- /body
+  >hi</
+ body
  >
 
 ==>

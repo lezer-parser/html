@@ -49,6 +49,8 @@ Comment { commentStart commentContent* commentEnd }
 
 RawText[@export] {}
 
+@context elementContext from "./tokens.js"
+
 @external tokens tagStart from "./tokens.js" {
   StartTag[closedBy="EndTag SelfCloseEndTag"],
   StartCloseTag[closedBy="EndTag SelfCloseEndTag"],
