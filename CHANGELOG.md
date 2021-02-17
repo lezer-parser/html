@@ -1,3 +1,9 @@
+## 0.13.3 (2021-02-17)
+
+### Bug fixes
+
+Optimize the tokenizer by using a context tracker.
+
 ## 0.13.2 (2021-01-22)
 
 ### Bug fixes
