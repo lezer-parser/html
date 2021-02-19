@@ -38,17 +38,17 @@ function randomDoc(size) {
   return doc
 }
 
-function check(doc, [tp, pos, ch], prevAST) {
+function check(doc, [tp, pos, txt], prevAST) {
   let change = {fromA: pos, toA: pos, fromB: pos, toB: pos}, newDoc
   if (tp == "insert") {
-    newDoc = doc.slice(0, pos) + doc.slice(pos + 1)
-    change.toA++
+    newDoc = doc.slice(0, pos) + txt + doc.slice(pos)
+    change.toA += txt.length
   } else if (tp == "del") {
-    newDoc = doc.slice(0, pos) + ch + doc.slice(pos)
+    newDoc = doc.slice(0, pos) + doc.slice(pos + 1)
     change.toB++
   } else {
-    newDoc = doc.slice(0, pos) + ch + doc.slice(pos + 1)
-    change.toA++
+    newDoc = doc.slice(0, pos) + txt + doc.slice(pos + 1)
+    change.toA += txt.length
     change.toB++
   }
   let fragments = TreeFragment.applyChanges(TreeFragment.addTree(prevAST || parser.parse(doc)), [change], 2)
@@ -89,5 +89,9 @@ describe("Incremental parsing", () => {
   it("is okay with nameless elements", () => {
     check("<body><code><img></code><>body>", ["replace", 14, ">"])
     check("abcde<>fghij<", ["replace", 12, ">"])
+  })
+
+  it("doesn't get confused by an invalid close tag receiving a matching open tag", () => {
+    check("<div><p>foo</body>", ["insert", 0, "<body>"])
   })
 })
