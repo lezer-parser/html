@@ -1,6 +1,6 @@
 {
   "name": "lezer-html",
-  "version": "0.13.3",
+  "version": "0.13.4",
   "description": "lezer-based HTML grammar",
   "main": "dist/index.cjs",
   "type": "module",

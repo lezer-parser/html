@@ -1,3 +1,9 @@
+## 0.13.4 (2021-03-10)
+
+### Bug fixes
+
+Strip quotes from attribute values passed to `attrs` predicates in `configureNesting`.
+
 ## 0.13.3 (2021-02-17)
 
 ### Bug fixes
