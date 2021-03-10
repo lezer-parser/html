@@ -1,5 +1,2 @@
-import {parser} from "./parser"
-
-export {parser}
-
+export {parser} from "./parser"
 export {configureNesting} from "./content"

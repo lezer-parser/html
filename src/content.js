@@ -10,9 +10,9 @@ function tagName(tag) {
 function attributes(tag) {
   let open = openTag.exec(tag), attrs = {}
   if (open) {
-    let attr = /\s*([\.\-\:\w\xa1-\uffff]+)\s*(?:=("[^"]*"|'[^']*'|[^\s=<>"'/]+))?/g, m
+    let attr = /\s*([\.\-\:\w\xa1-\uffff]+)\s*(?:=\s*(?:"([^"]*)"|'([^']*)'|([^\s=<>"'/]+)))?/g, m
     attr.lastIndex = open.index + open[0].length
-    while (m = attr.exec(tag)) attrs[m[1]] = m[2] || m[1]
+    while (m = attr.exec(tag)) attrs[m[1]] = m[4] || m[3] || m[2] || m[1]
   }
   return attrs
 }

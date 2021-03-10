@@ -38,6 +38,26 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),
   Element(OpenTag(StartTag,TagName,EndTag),
     Script(ExpressionStatement(null)))))
 
+# JS with script type
+
+<script type="text/javascript">console.log(2)</script>
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),EndTag),
+  Script(...),
+CloseTag(StartCloseTag,TagName,EndTag)))
+
+# JS with unquoted script type
+
+<script type=module>console.log(2)</script>
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
+  Script(...),
+CloseTag(StartCloseTag,TagName,EndTag)))
+
 # Error in JS
 
 <script>a b</script>
