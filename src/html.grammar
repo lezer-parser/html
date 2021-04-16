@@ -16,28 +16,28 @@ entity {
 }
 
 Element {
-  OpenTag nest.elementContent<"</" space* identifier space* ">", entity*> (CloseTag | missingCloseTag) |
+  OpenTag nest.elementContent<"</" space? identifier space? ">", entity*> (CloseTag | missingCloseTag) |
   SelfClosingTag
 }
 
 OpenTag[closedBy=CloseTag] {
-  StartTag space* TagName space* Attribute* EndTag
+  StartTag space? TagName space? Attribute* EndTag
 }
 
 SelfClosingTag {
-  StartTag space* TagName space* Attribute* SelfCloseEndTag
+  StartTag space? TagName space? Attribute* SelfCloseEndTag
 }
 
 MismatchedCloseTag {
-  MismatchedStartCloseTag space* TagName space* EndTag
+  MismatchedStartCloseTag space? TagName space? EndTag
 }
 
 CloseTag[openedBy=OpenTag] {
-  StartCloseTag space* TagName space* EndTag
+  StartCloseTag space? TagName space? EndTag
 }
 
 Attribute {
-  AttributeName space* (Is space* (AttributeValue | UnquotedAttributeValue) space*)?
+  AttributeName space? (Is space? (AttributeValue | UnquotedAttributeValue) space?)?
 }
 
 AttributeValue {
