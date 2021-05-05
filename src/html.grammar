@@ -20,24 +20,26 @@ Element {
   SelfClosingTag
 }
 
-OpenTag[closedBy=CloseTag] {
-  StartTag space? TagName space? Attribute* EndTag
-}
+@skip { space } {
+  OpenTag[closedBy=CloseTag] {
+    StartTag TagName Attribute* EndTag
+  }
 
-SelfClosingTag {
-  StartTag space? TagName space? Attribute* SelfCloseEndTag
-}
+  SelfClosingTag {
+    StartTag TagName Attribute* SelfCloseEndTag
+  }
 
-MismatchedCloseTag {
-  MismatchedStartCloseTag space? TagName space? EndTag
-}
+  MismatchedCloseTag {
+    MismatchedStartCloseTag TagName EndTag
+  }
 
-CloseTag[openedBy=OpenTag] {
-  StartCloseTag space? TagName space? EndTag
-}
+  CloseTag[openedBy=OpenTag] {
+    StartCloseTag TagName EndTag
+  }
 
-Attribute {
-  AttributeName space? (Is space? (AttributeValue | UnquotedAttributeValue) space?)?
+  Attribute {
+    AttributeName (Is (AttributeValue | UnquotedAttributeValue))?
+  }
 }
 
 AttributeValue {
