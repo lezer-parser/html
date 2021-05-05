@@ -1,3 +1,9 @@
+## 0.13.5 (2021-05-05)
+
+### Bug fixes
+
+Fix a problem where like attributes inappropriately included trailing whitespace.
+
 ## 0.13.4 (2021-03-10)
 
 ### Bug fixes
