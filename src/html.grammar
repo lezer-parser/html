@@ -8,6 +8,7 @@ entity {
   Text |
   EntityReference |
   CharacterReference |
+  InvalidEntity |
   Element |
   Comment |
   ProcessingInst |
@@ -99,6 +100,10 @@ RawText[@export] {}
   EntityReference { "&" ![#; ]+ ";" }
 
   CharacterReference { "&#" ![; ]+ ";" }
+
+  InvalidEntity { "&" }
+
+  @precedence { CharacterReference, EntityReference, InvalidEntity }
 
   Text { ![<&]+ }
 

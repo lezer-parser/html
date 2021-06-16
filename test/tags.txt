@@ -288,3 +288,11 @@ Document(Element(
   OpenTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
   Text,
   CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Doesn't get confused by a stray ampersand
+
+<html>a&b</html>
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),Text,InvalidEntity,Text,CloseTag(StartCloseTag,TagName,EndTag)))
