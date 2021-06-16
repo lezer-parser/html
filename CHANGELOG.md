@@ -1,3 +1,9 @@
+## 0.13.6 (2021-06-16)
+
+### Bug fixes
+
+Add a rule for invalid `&` syntax to avoid error-recovery around stray ampersands.
+
 ## 0.13.5 (2021-05-05)
 
 ### Bug fixes
