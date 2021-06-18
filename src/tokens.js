@@ -1,9 +1,11 @@
 /* Hand-written tokenizers for HTML. */
 
 import {ExternalTokenizer, ContextTracker} from "lezer"
-import {StartTag, StartScriptTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
+import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
         SelfCloseEndTag, IncompleteCloseTag, Element, OpenTag,
-        scriptText, StartCloseScriptTag,
+        StartScriptTag, scriptText, StartCloseScriptTag,
+        StartStyleTag, styleText, StartCloseStyleTag,
+        StartTextareaTag, textareaText, StartCloseTextareaTag,
         Dialect_noMatch, commentContent as cmntContent} from "./parser.terms.js"
 
 const selfClosers = {
@@ -76,10 +78,12 @@ function ElementContext(name, parent) {
   for (let i = 0; i < name.length; i++) this.hash += (this.hash << 4) + name.charCodeAt(i) + (name.charCodeAt(i) << 8)
 }
 
+const startTagTerms = [StartTag, StartScriptTag, StartStyleTag, StartTextareaTag]
+
 export const elementContext = new ContextTracker({
   start: null,
   shift(context, term, stack, input) {
-    return term == StartTag ? new ElementContext(tagNameAfter(input, 1) || "", context) : context
+    return startTagTerms.indexOf(term) > -1 ? new ElementContext(tagNameAfter(input, 1) || "", context) : context
   },
   reduce(context, term) {
     return term == Element && context ? context.parent : context
@@ -94,12 +98,14 @@ export const elementContext = new ContextTracker({
 })
 
 export const tagStart = new ExternalTokenizer((input, stack) => {
-  let first = input.next, close
-  // End of file, close any open tags
-  if (first < 0 && stack.context) input.acceptToken(missingCloseTag)
-  if (first != lessThan) return
+  if (input.next != lessThan) {
+    // End of file, close any open tags
+    if (input.next < 0 && stack.context) input.acceptToken(missingCloseTag)
+    return
+  }
   input.advance()
-  if (close = (input.next == slash)) input.advance()
+  let close = input.next == slash
+  if (close) input.advance()
   let name = tagNameAfter(input, 0)
   if (name === undefined) return
   if (!name) return input.acceptToken(close ? IncompleteCloseTag : StartTag)
@@ -113,6 +119,8 @@ export const tagStart = new ExternalTokenizer((input, stack) => {
     input.acceptToken(MismatchedStartCloseTag)
   } else {
     if (name == "script") return input.acceptToken(StartScriptTag)
+    if (name == "style") return input.acceptToken(StartStyleTag)
+    if (name == "textarea") return input.acceptToken(StartTextareaTag)
     if (parent && closeOnOpen[parent] && closeOnOpen[parent][name]) input.acceptToken(missingCloseTag, -1)
     else input.acceptToken(StartTag)
   }
@@ -149,35 +157,43 @@ export const commentContent = new ExternalTokenizer(input => {
   }
 })
 
-export const scriptTokens = new ExternalTokenizer(input => {
-  let tag = "script", lastState = 2 + tag.length
-  // state means:
-  // - 0 nothing matched
-  // - 1 '<' matched
-  // - 2 '</' + possibly whitespace matched
-  // - 3-(1+tag.length) part of the tag matched
-  // - lastState whole tag + possibly whitespace matched
-  for (let state = 0, matchedLen = 0, i = 0;; i++) {
-    if (input.next < 0) {
-      if (i) input.acceptToken(scriptText)
-      break
+function contentTokenizer(tag, textToken, endToken) {
+  let lastState = 2 + tag.length
+  return new ExternalTokenizer(input => {
+    // state means:
+    // - 0 nothing matched
+    // - 1 '<' matched
+    // - 2 '</' + possibly whitespace matched
+    // - 3-(1+tag.length) part of the tag matched
+    // - lastState whole tag + possibly whitespace matched
+    for (let state = 0, matchedLen = 0, i = 0;; i++) {
+      if (input.next < 0) {
+        if (i) input.acceptToken(textToken)
+        break
+      }
+      if (state == 0 && input.next == lessThan ||
+          state == 1 && input.next == slash ||
+          state >= 2 && state < lastState && input.next == tag.charCodeAt(state - 2)) {
+        state++
+        matchedLen++
+      } else if ((state == 2 || state == lastState) && isSpace(input.next)) {
+        matchedLen++
+      } else if (state == lastState && input.next == greaterThan) {
+        if (i > matchedLen)
+          input.acceptToken(textToken, -matchedLen)
+        else
+          input.acceptToken(endToken, -(matchedLen - 2))
+        break
+      } else {
+        state = matchedLen = 0
+      }
+      input.advance()
     }
-    if (state == 0 && input.next == lessThan ||
-        state == 1 && input.next == slash ||
-        state >= 2 && state < lastState && input.next == tag.charCodeAt(state - 2)) {
-      state++
-      matchedLen++
-    } else if ((state == 2 || state == lastState) && isSpace(input.next)) {
-      matchedLen++
-    } else if (state == lastState && input.next == greaterThan) {
-      if (i > matchedLen)
-        input.acceptToken(scriptText, -matchedLen)
-      else
-        input.acceptToken(StartCloseScriptTag, -(matchedLen - 2))
-      break
-    } else {
-      state = matchedLen = 0
-    }
-    input.advance()
-  }
-})
+  })
+}
+
+export const scriptTokens = contentTokenizer("script", scriptText, StartCloseScriptTag)
+
+export const styleTokens = contentTokenizer("style", styleText, StartCloseStyleTag)
+
+export const textareaTokens = contentTokenizer("textarea", textareaText, StartCloseTextareaTag)

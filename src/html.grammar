@@ -16,7 +16,8 @@ entity {
 
 Element {
   OpenScriptTag RawText { scriptText* } (CloseScriptTag | missingCloseTag) |
-//  openStyleTag RawText { styleText* } (closeStyleTag | missingCloseTag) |
+  OpenStyleTag RawText { styleText* } (CloseStyleTag | missingCloseTag) |
+  OpenTextareaTag RawText { textareaText* } (CloseTextareaTag | missingCloseTag) |
   OpenTag entity* (CloseTag | missingCloseTag) |
   SelfClosingTag
 }
@@ -46,6 +47,22 @@ Element {
     StartCloseScriptTag TagName EndTag
   }
 
+  OpenStyleTag[@name=OpenTag,closedBy=CloseTag] {
+    StartStyleTag TagName Attribute* EndTag
+  }
+
+  CloseStyleTag[@name=CloseTag,openedBy=OpenTag] {
+    StartCloseStyleTag TagName EndTag
+  }
+
+  OpenTextareaTag[@name=OpenTag,closedBy=CloseTag] {
+    StartTextareaTag TagName Attribute* EndTag
+  }
+
+  CloseTextareaTag[@name=CloseTag,openedBy=OpenTag] {
+    StartCloseTextareaTag TagName EndTag
+  }
+
   Attribute {
     AttributeName (Is (AttributeValue | UnquotedAttributeValue))?
   }
@@ -65,9 +82,21 @@ Comment { commentStart commentContent* commentEnd }
   StartCloseScriptTag[@name=StartCloseTag,closedBy=EndTag]
 }
 
+@external tokens styleTokens from "./tokens.js" {
+  styleText
+  StartCloseStyleTag[@name=StartCloseTag,closedBy=EndTag]
+}
+
+@external tokens textareaTokens from "./tokens.js" {
+  textareaText
+  StartCloseTextareaTag[@name=StartCloseTag,closedBy=EndTag]
+}
+
 @external tokens tagStart from "./tokens.js" {
   StartTag[closedBy="EndTag SelfCloseEndTag"],
   StartScriptTag[@name=StartTag,closedBy="EndTag"],
+  StartStyleTag[@name=StartTag,closedBy="EndTag"],
+  StartTextareaTag[@name=StartTag,closedBy="EndTag"],
   StartCloseTag[closedBy="EndTag SelfCloseEndTag"],
   MismatchedStartCloseTag[@name=StartCloseTag],
   missingCloseTag,
