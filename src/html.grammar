@@ -2,7 +2,7 @@
 
 @dialects { noMatch }
 
-entity {
+entity[@isGroup=Entity] {
   Text |
   EntityReference |
   CharacterReference |
@@ -15,12 +15,18 @@ entity {
 }
 
 Element {
-  OpenScriptTag RawText { scriptText* } (CloseScriptTag | missingCloseTag) |
-  OpenStyleTag RawText { styleText* } (CloseStyleTag | missingCloseTag) |
-  OpenTextareaTag RawText { textareaText* } (CloseTextareaTag | missingCloseTag) |
+  OpenScriptTag ScriptText (CloseScriptTag | missingCloseTag) |
+  OpenStyleTag StyleText (CloseStyleTag | missingCloseTag) |
+  OpenTextareaTag TextareaText (CloseTextareaTag | missingCloseTag) |
   OpenTag entity* (CloseTag | missingCloseTag) |
   SelfClosingTag
 }
+
+ScriptText[group="TextContent Entity"] { scriptText* }
+
+StyleText[group="TextContent Entity"] { styleText* }
+
+TextareaText[group="TextContent Entity"] { textareaText* }
 
 @skip { space } {
   OpenTag[closedBy=CloseTag] {
@@ -146,7 +152,7 @@ Comment { commentStart commentContent* commentEnd }
 
   @precedence { CharacterReference, EntityReference, InvalidEntity }
 
-  Text { ![<&]+ }
+  Text[group=TextContent] { ![<&]+ }
 
   commentStart { "<!--" }
   commentEnd { "-->" }

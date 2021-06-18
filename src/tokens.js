@@ -184,6 +184,9 @@ function contentTokenizer(tag, textToken, endToken) {
         else
           input.acceptToken(endToken, -(matchedLen - 2))
         break
+      } else if ((input.next == 10 /* '\n' */ || input.next == 13 /* '\r' */) || i) {
+        input.acceptToken(textToken, 1)
+        break
       } else {
         state = matchedLen = 0
       }

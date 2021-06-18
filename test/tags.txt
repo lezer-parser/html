@@ -262,7 +262,7 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),Text),Element(OpenTag(StartTag
 Document(Element(OpenTag(StartTag,TagName,EndTag),
   Text,
   Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
-    RawText,
+    TextareaText,
   CloseTag(StartCloseTag,TagName,EndTag))))
 
 # Script
@@ -271,7 +271,7 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),
 
 ==>
 
-Document(Element(OpenTag(StartTag,TagName,EndTag),RawText,CloseTag(StartCloseTag,TagName,EndTag)))
+Document(Element(OpenTag(StartTag,TagName,EndTag),ScriptText,CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Allows whitespace in tags
 

@@ -5,7 +5,7 @@
 ==>
 
 Document(Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),EndTag),
-  RawText,
+  ScriptText,
 CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Does parse type-less script tags as JS
@@ -25,7 +25,7 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 ==>
 
 Document(Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
-  RawText,
+  ScriptText,
 CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Missing end tag

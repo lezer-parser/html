@@ -1,11 +1,6 @@
-/*import {RawText} from "./parser.terms.js"
+import {ScriptText, StyleText, TextareaText, Element} from "./parser.terms.js"
 
 const openTag = /^<\/?\s*([\.\-\:\w\xa1-\uffff]+)/
-
-function tagName(tag) {
-  let m = openTag.exec(tag)
-  return m ? m[1].toLowerCase() : null
-}
 
 function attributes(tag) {
   let open = openTag.exec(tag), attrs = {}
@@ -20,48 +15,37 @@ function attributes(tag) {
 function skip(name) { return token => tagName(token) == name }
 
 // tags: {
-//   tag: string,
+//   tag: "script" | "style" | "textarea",
 //   attrs?: ({[attr: string]: string}) => boolean,
-//   parser: {startParse: (input: Input, startPos?: number, context?: ParseContext) => IncrementalParse}
+//   parser: Parser
 // }[]
 
-function resolveContent(tags) {
-  let tagMap = null
-  for (let tag of tags) {
-    if (!tagMap) tagMap = Object.create(null)
-    ;(tagMap[tag.tag] || (tagMap[tag.tag] = [])).push({
-      attrs: tag.attrs,
-      value: {
-        filterEnd: skip(tag.tag),
-        startParse: tag.parser.startParse.bind(tag.parser)
-      }
-    })
-  }
-  return function(input, stack) {
-    let openTag = input.read(stack.ruleStart, stack.pos)
-    let name = tagName(openTag), matches, attrs
-    if (!name) return null
-    if (tagMap && (matches = tagMap[name])) {
-      for (let match of matches) {
-        if (!match.attrs || match.attrs(attrs || (attrs = attributes(openTag)))) return match.value
-      }
-    }
-    if (name == "script" || name == "textarea" || name == "style") return {
-      filterEnd: skip(name),
-      wrapType: RawText
-    }
+const tagTypes = {
+  script: ScriptText,
+  style: StyleText,
+  textarea: TextareaText
+}
+
+const elementType = [Element]
+
+function nestedFor(tags) {
+  return (input, stack, from) => {
+    let openTag = input.read(stack.startOf(elementType), from), matches, attrs
+    for (let match of tags) if (!match.attrs || match.attrs(attrs || (attrs = attributes(openTag))))
+      return match.parser
     return null
   }
 }
 
-export const elementContent = resolveContent([])
-
 export function configureNesting(tags) {
-  return {elementContent: resolveContent(tags)}
-}
-*/
-
-export const elementContent = null
-
-export function configureNesting(tags) {
+  let tagMap = Object.create(null)
+  for (let tag of tags) {
+    if (!tagTypes.hasOwnProperty(tag.tag))
+      throw new RangeError("Only script, style, and textarea tags can host nested parsers")
+    let id = tagTypes[tag.tag]
+    ;(tagMap[id] || (tagMap[id] = [])).push(tag)
+  }
+  let result = Object.create(null)
+  for (let id in tagMap) result[id] = nestedFor(tagMap[id])
+  return result
 }
