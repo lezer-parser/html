@@ -1,4 +1,4 @@
-import {RawText} from "./parser.terms.js"
+/*import {RawText} from "./parser.terms.js"
 
 const openTag = /^<\/?\s*([\.\-\:\w\xa1-\uffff]+)/
 
@@ -58,4 +58,10 @@ export const elementContent = resolveContent([])
 
 export function configureNesting(tags) {
   return {elementContent: resolveContent(tags)}
+}
+*/
+
+export const elementContent = null
+
+export function configureNesting(tags) {
 }

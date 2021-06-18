@@ -1,8 +1,9 @@
 /* Hand-written tokenizers for HTML. */
 
 import {ExternalTokenizer, ContextTracker} from "lezer"
-import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
+import {StartTag, StartScriptTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
         SelfCloseEndTag, IncompleteCloseTag, Element, OpenTag,
+        scriptText, StartCloseScriptTag,
         Dialect_noMatch, commentContent as cmntContent} from "./parser.terms.js"
 
 const selfClosers = {
@@ -111,6 +112,7 @@ export const tagStart = new ExternalTokenizer((input, stack) => {
     for (let cx = stack.context; cx; cx = cx.parent) if (cx.name == name) return
     input.acceptToken(MismatchedStartCloseTag)
   } else {
+    if (name == "script") return input.acceptToken(StartScriptTag)
     if (parent && closeOnOpen[parent] && closeOnOpen[parent][name]) input.acceptToken(missingCloseTag, -1)
     else input.acceptToken(StartTag)
   }
@@ -142,6 +144,39 @@ export const commentContent = new ExternalTokenizer(input => {
       }
     } else {
       endPos = 0
+    }
+    input.advance()
+  }
+})
+
+export const scriptTokens = new ExternalTokenizer(input => {
+  let tag = "script", lastState = 2 + tag.length
+  // state means:
+  // - 0 nothing matched
+  // - 1 '<' matched
+  // - 2 '</' + possibly whitespace matched
+  // - 3-(1+tag.length) part of the tag matched
+  // - lastState whole tag + possibly whitespace matched
+  for (let state = 0, matchedLen = 0, i = 0;; i++) {
+    if (input.next < 0) {
+      if (i) input.acceptToken(scriptText)
+      break
+    }
+    if (state == 0 && input.next == lessThan ||
+        state == 1 && input.next == slash ||
+        state >= 2 && state < lastState && input.next == tag.charCodeAt(state - 2)) {
+      state++
+      matchedLen++
+    } else if ((state == 2 || state == lastState) && isSpace(input.next)) {
+      matchedLen++
+    } else if (state == lastState && input.next == greaterThan) {
+      if (i > matchedLen)
+        input.acceptToken(scriptText, -matchedLen)
+      else
+        input.acceptToken(StartCloseScriptTag, -(matchedLen - 2))
+      break
+    } else {
+      state = matchedLen = 0
     }
     input.advance()
   }
