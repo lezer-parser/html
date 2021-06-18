@@ -1,7 +1,5 @@
 @top Document { (entity | DoctypeDecl)+ }
 
-@external grammar elementContent from "./content.js"
-
 @dialects { noMatch }
 
 entity {
@@ -17,7 +15,7 @@ entity {
 }
 
 Element {
-  OpenTag nest.elementContent<"</" space? identifier space? ">", entity*> (CloseTag | missingCloseTag) |
+  OpenTag entity* (CloseTag | missingCloseTag) |
   SelfClosingTag
 }
 

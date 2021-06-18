@@ -50,15 +50,20 @@ function isSpace(ch) {
 }
 
 let cachedName = null, cachedInput = null, cachedPos = 0
-function tagNameAfter(input, pos) {
+function tagNameAfter(input, offset) {
+  let pos = input.pos + offset
   if (cachedPos == pos && cachedInput == input) return cachedName
-  let next = input.get(pos)
-  while (isSpace(next)) next = input.get(++pos)
-  let start = pos
-  while (nameChar(next)) next = input.get(++pos)
+  let next = input.peek(offset)
+  while (isSpace(next)) next = input.peek(++offset)
+  let name = ""
+  for (;;) {
+    if (!nameChar(next)) break
+    name += String.fromCharCode(next)
+    next = input.peek(++offset)
+  }
   // Undefined to signal there's a <? or <!, null for just missing
   cachedInput = input; cachedPos = pos
-  return cachedName = pos > start ? input.read(start, pos).toLowerCase() : next == question || next == bang ? undefined : null
+  return cachedName = name || (next == question || next == bang ? undefined : null)
 }
 
 const lessThan = 60, greaterThan = 62, slash = 47, question = 63, bang = 33
@@ -72,68 +77,72 @@ function ElementContext(name, parent) {
 
 export const elementContext = new ContextTracker({
   start: null,
-  shift(context, term, input, stack) {
-    return term == StartTag ? new ElementContext(tagNameAfter(input, stack.pos) || "", context) : context
+  shift(context, term, stack, input) {
+    return term == StartTag ? new ElementContext(tagNameAfter(input, 1) || "", context) : context
   },
   reduce(context, term) {
     return term == Element && context ? context.parent : context
   },
-  reuse(context, node, input, stack) {
+  reuse(context, node, stack, input) {
     let type = node.type.id
     return type == StartTag || type == OpenTag
-      ? new ElementContext(tagNameAfter(input, stack.pos - node.length + 1) || "", context) : context
+      ? new ElementContext(tagNameAfter(input, 1) || "", context) : context
   },
   hash(context) { return context ? context.hash : 0 },
   strict: false
 })
 
-export const tagStart = new ExternalTokenizer((input, token, stack) => {
-  let pos = token.start, first = input.get(pos), close
+export const tagStart = new ExternalTokenizer((input, stack) => {
+  let first = input.next, close
   // End of file, close any open tags
-  if (first < 0 && stack.context) token.accept(missingCloseTag, token.start)
+  if (first < 0 && stack.context) input.acceptToken(missingCloseTag)
   if (first != lessThan) return
-  pos++
-  if (close = (input.get(pos) == slash)) pos++
-  let name = tagNameAfter(input, pos)
+  input.advance()
+  if (close = (input.next == slash)) input.advance()
+  let name = tagNameAfter(input, 0)
   if (name === undefined) return
-  if (!name) return token.accept(close ? IncompleteCloseTag : StartTag, pos)
+  if (!name) return input.acceptToken(close ? IncompleteCloseTag : StartTag)
 
   let parent = stack.context ? stack.context.name : null
   if (close) {
-    if (name == parent) return token.accept(StartCloseTag, pos)
-    if (parent && implicitlyClosed[parent]) return token.accept(missingCloseTag, token.start)
-    if (stack.dialectEnabled(Dialect_noMatch)) return token.accept(StartCloseTag, pos)
+    if (name == parent) return input.acceptToken(StartCloseTag)
+    if (parent && implicitlyClosed[parent]) return input.acceptToken(missingCloseTag, -2)
+    if (stack.dialectEnabled(Dialect_noMatch)) return input.acceptToken(StartCloseTag)
     for (let cx = stack.context; cx; cx = cx.parent) if (cx.name == name) return
-    token.accept(MismatchedStartCloseTag, pos)
+    input.acceptToken(MismatchedStartCloseTag)
   } else {
-    if (parent && closeOnOpen[parent] && closeOnOpen[parent][name]) token.accept(missingCloseTag, token.start)
-    else token.accept(StartTag, pos)
+    if (parent && closeOnOpen[parent] && closeOnOpen[parent][name]) input.acceptToken(missingCloseTag, -1)
+    else input.acceptToken(StartTag)
   }
-})
+}, {contextual: true})
 
-export const selfClosed = new ExternalTokenizer((input, token, stack) => {
-  let next = input.get(token.start), end = token.start + 1
-  if (next == slash) {
-    if (input.get(end) != greaterThan) return
-    end++
-  } else if (next != greaterThan) {
+export const selfClosed = new ExternalTokenizer((input, stack) => {
+//  let next = input.get(token.start), end = token.start + 1
+  let size = 1
+  if (input.next == slash) {
+    if (input.peek(1) != greaterThan) return
+    size = 2
+  } else if (input.next != greaterThan) {
     return
   }
-  if (stack.context && selfClosers[stack.context.name]) token.accept(SelfCloseEndTag, end)
+  if (stack.context && selfClosers[stack.context.name]) input.acceptToken(SelfCloseEndTag, size)
 })
 
-export const commentContent = new ExternalTokenizer((input, token) => {
-  let pos = token.start, endPos = 0
-  for (;;) {
-    let next = input.get(pos)
-    if (next < 0) break
-    pos++
-    if (next == "-->".charCodeAt(endPos)) {
+export const commentContent = new ExternalTokenizer(input => {
+  for (let endPos = 0, i = 0;; i++) {
+    if (input.next < 0) {
+      if (i) input.acceptToken(cmntContent)
+      break
+    }
+    if (input.next == "-->".charCodeAt(endPos)) {
       endPos++
-      if (endPos == 3) { pos -= 3; break }
+      if (endPos == 3) {
+        if (i > 3) input.acceptToken(cmntContent, -2)
+        break
+      }
     } else {
       endPos = 0
     }
+    input.advance()
   }
-  if (pos > token.start) token.accept(cmntContent, pos)
 })
