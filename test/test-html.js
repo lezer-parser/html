@@ -1,6 +1,6 @@
 import {parser, configureNesting} from "../dist/index.es.js"
-import {parser as jsParser} from "lezer-javascript"
-import {fileTests} from "lezer-generator/dist/test"
+import {parser as jsParser} from "@lezer/javascript"
+import {fileTests} from "@lezer/generator/dist/test"
 
 import * as fs from "fs"
 import * as path from "path"

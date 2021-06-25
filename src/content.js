@@ -19,7 +19,7 @@ function skip(name) { return token => tagName(token) == name }
 //   attrs?: ({[attr: string]: string}) => boolean,
 //   parser: Parser
 // }[]
-
+ 
 const tagTypes = {
   script: ScriptText,
   style: StyleText,

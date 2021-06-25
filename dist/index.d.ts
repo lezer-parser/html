@@ -1,10 +1,10 @@
-import {Parser, NestedParser} from "lezer"
-import {Input, ParseContext, PartialParse} from "lezer-tree"
+import {LRParser, NestMap} from "@lezer/lr"
+import {Input, PartialParse, Parser} from "@lezer/common"
 
-export const parser: Parser
+export const parser: LRParser
 
-export function configureNesting(tags: {
-  tag: string,
+export function configureNesting(tags: readonly {
+  tag: "script" | "style" | "textarea",
   attrs?: (attrs: {[attr: string]: string}) => boolean,
-  parser: {startParse: (input: Input, startPos: number, context: ParseContext) => PartialParse}
-}[]): {[name: string]: NestedParser}
+  parser: Parser
+}[]): NestMap

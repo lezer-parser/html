@@ -1,6 +1,6 @@
 /* Hand-written tokenizers for HTML. */
 
-import {ExternalTokenizer, ContextTracker} from "lezer"
+import {ExternalTokenizer, ContextTracker} from "@lezer/lr"
 import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
         SelfCloseEndTag, IncompleteCloseTag, Element, OpenTag,
         StartScriptTag, scriptText, StartCloseScriptTag,
