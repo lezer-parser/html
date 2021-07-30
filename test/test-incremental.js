@@ -51,9 +51,9 @@ function check(doc, [tp, pos, txt], prevAST) {
     change.toA += txt.length
     change.toB++
   }
-  let fragments = TreeFragment.applyChanges(TreeFragment.addTree(prevAST || parser.parse({input: doc})), [change], 2)
-  let ast = parser.parse({input: newDoc, fragments})
-  let orig = parser.parse({input: newDoc})
+  let fragments = TreeFragment.applyChanges(TreeFragment.addTree(prevAST || parser.parse(doc)), [change], 2)
+  let ast = parser.parse(newDoc, fragments)
+  let orig = parser.parse(newDoc)
   if (ast.toString() != orig.toString()) {
     throw new Error(`Mismatch:\n  ${ast}\nvs\n  ${orig}\ndocument: ${
       JSON.stringify(doc)}\naction: ${JSON.stringify([tp, pos, ch])}`)

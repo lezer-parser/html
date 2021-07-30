@@ -127,7 +127,6 @@ export const tagStart = new ExternalTokenizer((input, stack) => {
 }, {contextual: true})
 
 export const selfClosed = new ExternalTokenizer((input, stack) => {
-//  let next = input.get(token.start), end = token.start + 1
   let size = 1
   if (input.next == slash) {
     if (input.peek(1) != greaterThan) return
