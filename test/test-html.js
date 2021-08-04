@@ -1,20 +1,21 @@
 import {parser, configureNesting} from "../dist/index.es.js"
 import {parser as jsParser} from "@lezer/javascript"
 import {fileTests} from "@lezer/generator/dist/test"
-import {MixParser} from "@lezer/mix"
 
 import * as fs from "fs"
 import * as path from "path"
 import { fileURLToPath } from 'url';
 let caseDir = path.dirname(fileURLToPath(import.meta.url))
 
-let mixed = new MixParser(parser, configureNesting([{
-  tag: "script",
-  attrs(attrs) {
-    return !attrs.type || /^(?:text|application)\/(?:x-)?(?:java|ecma)script$|^module$|^$/i.test(attrs.type)
-  },
-  parser: jsParser
-}]))
+let mixed = parser.configure({
+  wrap: configureNesting([{
+    tag: "script",
+    attrs(attrs) {
+      return !attrs.type || /^(?:text|application)\/(?:x-)?(?:java|ecma)script$|^module$|^$/i.test(attrs.type)
+    },
+    parser: jsParser
+  }])
+})
 
 for (let file of fs.readdirSync(caseDir)) {
   if (!/\.txt$/.test(file)) continue

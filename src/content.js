@@ -1,4 +1,5 @@
 import {ScriptText, StyleText, TextareaText, Element} from "./parser.terms.js"
+import {parseMixed} from "@lezer/common"
 
 function getAttrs(element, input) {
   let attrs = Object.create(null)
@@ -32,11 +33,11 @@ export function configureNesting(tags) {
     if (!array) throw new RangeError("Only script, style, and textarea tags can host nested parsers")
     array.push(tag)
   }
-  return (node, input) => {
+  return parseMixed((node, input) => {
     let id = node.type.id
     if (id == ScriptText) return maybeNest(node, input, script)
     if (id == StyleText) return maybeNest(node, input, style)
     if (id == TextareaText) return maybeNest(node, input, textarea)
     return null
-  }
+  })
 }
