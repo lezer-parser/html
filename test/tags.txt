@@ -296,3 +296,19 @@ Document(Element(
 ==>
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),Text,InvalidEntity,Text,CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Can ignore mismatches {"dialect": "noMatch"}
+
+<div>foo</p>
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),Text,CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Can handle lone close tags {"dialect": "noMatch"}
+
+</strong>
+
+==>
+
+Document(CloseTag(StartCloseTag,TagName,EndTag))

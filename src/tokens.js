@@ -1,7 +1,7 @@
 /* Hand-written tokenizers for HTML. */
 
 import {ExternalTokenizer, ContextTracker} from "@lezer/lr"
-import {StartTag, StartCloseTag, MismatchedStartCloseTag, missingCloseTag,
+import {StartTag, StartCloseTag, NoMatchStartCloseTag, MismatchedStartCloseTag, missingCloseTag,
         SelfCloseEndTag, IncompleteCloseTag, Element, OpenTag,
         StartScriptTag, scriptText, StartCloseScriptTag,
         StartStyleTag, styleText, StartCloseStyleTag,
@@ -114,7 +114,7 @@ export const tagStart = new ExternalTokenizer((input, stack) => {
   if (close) {
     if (name == parent) return input.acceptToken(StartCloseTag)
     if (parent && implicitlyClosed[parent]) return input.acceptToken(missingCloseTag, -2)
-    if (stack.dialectEnabled(Dialect_noMatch)) return input.acceptToken(StartCloseTag)
+    if (stack.dialectEnabled(Dialect_noMatch)) return input.acceptToken(NoMatchStartCloseTag)
     for (let cx = stack.context; cx; cx = cx.parent) if (cx.name == name) return
     input.acceptToken(MismatchedStartCloseTag)
   } else {

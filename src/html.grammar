@@ -11,7 +11,8 @@ entity[@isGroup=Entity] {
   Comment |
   ProcessingInst |
   IncompleteCloseTag |
-  MismatchedCloseTag
+  MismatchedCloseTag |
+  NoMatchCloseTag
 }
 
 Element {
@@ -39,6 +40,10 @@ TextareaText[group="TextContent Entity"] { textareaText* }
 
   MismatchedCloseTag {
     MismatchedStartCloseTag TagName EndTag
+  }
+
+  NoMatchCloseTag[@name=CloseTag] {
+    NoMatchStartCloseTag TagName EndTag
   }
 
   CloseTag[openedBy=OpenTag] {
@@ -100,11 +105,12 @@ Comment { commentStart commentContent* commentEnd }
 
 @external tokens tagStart from "./tokens.js" {
   StartTag[closedBy="EndTag SelfCloseEndTag"],
-  StartScriptTag[@name=StartTag,closedBy="EndTag"],
-  StartStyleTag[@name=StartTag,closedBy="EndTag"],
-  StartTextareaTag[@name=StartTag,closedBy="EndTag"],
-  StartCloseTag[closedBy="EndTag SelfCloseEndTag"],
-  MismatchedStartCloseTag[@name=StartCloseTag],
+  StartScriptTag[@name=StartTag,closedBy=EndTag],
+  StartStyleTag[@name=StartTag,closedBy=EndTag],
+  StartTextareaTag[@name=StartTag,closedBy=EndTag],
+  StartCloseTag[closedBy=EndTag],
+  NoMatchStartCloseTag[@name=StartCloseTag,closedBy=EndTag]
+  MismatchedStartCloseTag[@name=StartCloseTag,closedBy=EndTag],
   missingCloseTag,
   IncompleteCloseTag
 }
