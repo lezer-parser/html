@@ -1,3 +1,11 @@
+## 0.15.0 (2021-08-11)
+
+### Breaking changes
+
+The module's name changed from `lezer-html` to `@lezer/html`.
+
+Upgrade to the 0.15.0 lezer interfaces.
+
 ## 0.13.6 (2021-06-16)
 
 ### Bug fixes
