@@ -1,4 +1,4 @@
-# lezer-html
+# @lezer/html
 
 This is an HTML grammar for the
 [lezer](https://lezer.codemirror.net/) parser system.
