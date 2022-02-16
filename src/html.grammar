@@ -35,7 +35,7 @@ TextareaText[group="TextContent Entity"] { textareaText* }
   }
 
   SelfClosingTag {
-    StartTag TagName Attribute* SelfCloseEndTag
+    StartSelfClosingTag TagName Attribute* EndTag
   }
 
   MismatchedCloseTag {
@@ -104,19 +104,16 @@ Comment { commentStart commentContent* commentEnd }
 }
 
 @external tokens tagStart from "./tokens.js" {
-  StartTag[closedBy="EndTag SelfCloseEndTag"],
+  StartTag[closedBy=EndTag],
   StartScriptTag[@name=StartTag,closedBy=EndTag],
   StartStyleTag[@name=StartTag,closedBy=EndTag],
   StartTextareaTag[@name=StartTag,closedBy=EndTag],
+  StartSelfClosingTag[@name=StartTag,closedBy=EndTag],
   StartCloseTag[closedBy=EndTag],
   NoMatchStartCloseTag[@name=StartCloseTag,closedBy=EndTag]
   MismatchedStartCloseTag[@name=StartCloseTag,closedBy=EndTag],
   missingCloseTag,
   IncompleteCloseTag
-}
-
-@external tokens selfClosed from "./tokens.js" {
-  SelfCloseEndTag[openedBy="StartTag"]
 }
 
 @external tokens commentContent from "./tokens.js" {

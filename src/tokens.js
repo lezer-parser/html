@@ -2,7 +2,7 @@
 
 import {ExternalTokenizer, ContextTracker} from "@lezer/lr"
 import {StartTag, StartCloseTag, NoMatchStartCloseTag, MismatchedStartCloseTag, missingCloseTag,
-        SelfCloseEndTag, IncompleteCloseTag, Element, OpenTag,
+        StartSelfClosingTag, IncompleteCloseTag, Element, OpenTag,
         StartScriptTag, scriptText, StartCloseScriptTag,
         StartStyleTag, styleText, StartCloseStyleTag,
         StartTextareaTag, textareaText, StartCloseTextareaTag,
@@ -66,7 +66,7 @@ function tagNameAfter(input, offset) {
   }
   // Undefined to signal there's a <? or <!, null for just missing
   cachedInput = input; cachedPos = pos
-  return cachedName = name || (next == question || next == bang ? undefined : null)
+  return cachedName = name ? name.toLowerCase() : next == question || next == bang ? undefined : null
 }
 
 const lessThan = 60, greaterThan = 62, slash = 47, question = 63, bang = 33
@@ -78,7 +78,7 @@ function ElementContext(name, parent) {
   for (let i = 0; i < name.length; i++) this.hash += (this.hash << 4) + name.charCodeAt(i) + (name.charCodeAt(i) << 8)
 }
 
-const startTagTerms = [StartTag, StartScriptTag, StartStyleTag, StartTextareaTag]
+const startTagTerms = [StartTag, StartSelfClosingTag, StartScriptTag, StartStyleTag, StartTextareaTag]
 
 export const elementContext = new ContextTracker({
   start: null,
@@ -121,21 +121,11 @@ export const tagStart = new ExternalTokenizer((input, stack) => {
     if (name == "script") return input.acceptToken(StartScriptTag)
     if (name == "style") return input.acceptToken(StartStyleTag)
     if (name == "textarea") return input.acceptToken(StartTextareaTag)
+    if (selfClosers.hasOwnProperty(name)) return input.acceptToken(StartSelfClosingTag)
     if (parent && closeOnOpen[parent] && closeOnOpen[parent][name]) input.acceptToken(missingCloseTag, -1)
     else input.acceptToken(StartTag)
   }
 }, {contextual: true})
-
-export const selfClosed = new ExternalTokenizer((input, stack) => {
-  let size = 1
-  if (input.next == slash) {
-    if (input.peek(1) != greaterThan) return
-    size = 2
-  } else if (input.next != greaterThan) {
-    return
-  }
-  if (stack.context && selfClosers[stack.context.name]) input.acceptToken(SelfCloseEndTag, size)
-})
 
 export const commentContent = new ExternalTokenizer(input => {
   for (let endPos = 0, i = 0;; i++) {

@@ -14,7 +14,7 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),Text,CloseTag(StartCloseTag,Ta
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),
   Element(OpenTag(StartTag,TagName,EndTag),Text,CloseTag(StartCloseTag,TagName,EndTag)),
-  Element(SelfClosingTag(StartTag,TagName,SelfCloseEndTag)),
+  Element(SelfClosingTag(StartTag,TagName,EndTag)),
 CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Attribute
@@ -23,7 +23,7 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 
 ==>
 
-Document(Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),SelfCloseEndTag)))
+Document(Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),EndTag)))
 
 # Multiple attributes
 
@@ -70,7 +70,7 @@ CloseTag(StartCloseTag,TagName,EndTag)))
 Document(Element(SelfClosingTag(StartTag, TagName,
   Attribute(AttributeName, Is, AttributeValue),
   Attribute(AttributeName, Is, AttributeValue(EntityReference)),
-SelfCloseEndTag)))
+EndTag)))
 
 # Entities
 
@@ -131,7 +131,7 @@ Document(Element(OpenTag(StartTag,TagName,EndTag)))
 
 ==>
 
-Document(Element(SelfClosingTag(StartTag,TagName,SelfCloseEndTag)))
+Document(Element(SelfClosingTag(StartTag,TagName,EndTag)))
 
 # Unclosed implicitly closed tag
 
@@ -214,7 +214,7 @@ Document(
 ==>
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),
-  Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),SelfCloseEndTag)),
+  Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag)),
 CloseTag(StartCloseTag,TagName,EndTag)))
 
 # Implicitly closed
