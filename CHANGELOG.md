@@ -1,3 +1,9 @@
+## 0.15.1 (2022-02-16)
+
+### Bug fixes
+
+Make sure the tree for unfinished self-closing tags shows them as self-closing.
+
 ## 0.15.0 (2021-08-11)
 
 ### Breaking changes
