@@ -171,3 +171,5 @@ Comment { commentStart commentContent* commentEnd }
 
   space { (" " | "\t" | "\r" | "\n")+ }
 }
+
+@external propSource htmlHighlighting from "./highlight"
