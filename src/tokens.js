@@ -69,7 +69,7 @@ function tagNameAfter(input, offset) {
   return cachedName = name ? name.toLowerCase() : next == question || next == bang ? undefined : null
 }
 
-const lessThan = 60, greaterThan = 62, slash = 47, question = 63, bang = 33
+const lessThan = 60, greaterThan = 62, slash = 47, question = 63, bang = 33, dash = 45
 
 function ElementContext(name, parent) {
   this.name = name
@@ -128,19 +128,18 @@ export const tagStart = new ExternalTokenizer((input, stack) => {
 }, {contextual: true})
 
 export const commentContent = new ExternalTokenizer(input => {
-  for (let endPos = 0, i = 0;; i++) {
+  for (let dashes = 0, i = 0;; i++) {
     if (input.next < 0) {
       if (i) input.acceptToken(cmntContent)
       break
     }
-    if (input.next == "-->".charCodeAt(endPos)) {
-      endPos++
-      if (endPos == 3) {
-        if (i > 3) input.acceptToken(cmntContent, -2)
-        break
-      }
+    if (input.next == dash) {
+      dashes++
+    } else if (input.next == greaterThan && dashes >= 2) {
+      if (i > 3) input.acceptToken(cmntContent, -2)
+      break
     } else {
-      endPos = 0
+      dashes = 0
     }
     input.advance()
   }
