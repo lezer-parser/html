@@ -1,3 +1,9 @@
+## 0.16.1 (2022-05-16)
+
+### Bug fixes
+
+Fix a bug where comment end tokens preceded by dashes were sometimes not recognized.
+
 ## 0.16.0 (2022-04-20)
 
 ### Breaking changes
