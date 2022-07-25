@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "@lezer/lr": "^1.0.0",
-    "@lezer/highlight": "^1.0.0"
+    "@lezer/highlight": "^1.0.0",
+    "@lezer/common": "^1.0.0"
   },
   "repository": {
     "type" : "git",
