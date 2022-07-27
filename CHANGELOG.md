@@ -1,3 +1,9 @@
+## 1.0.1 (2022-07-27)
+
+### Bug fixes
+
+Continue parsing when an invalid entity reference appears in an attribute value.
+
 ## 1.0.0 (2022-06-06)
 
 ### New features
