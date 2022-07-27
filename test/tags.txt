@@ -312,3 +312,11 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),Text,CloseTag(StartCloseTag,Ta
 ==>
 
 Document(CloseTag(StartCloseTag,TagName,EndTag))
+
+# Parses ampersands in attributes
+
+<img src="foo&bar">
+
+==>
+
+Document(Element(SelfClosingTag(StartTag, TagName, Attribute(AttributeName, Is, AttributeValue(InvalidEntity)), EndTag)))

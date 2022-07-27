@@ -80,8 +80,8 @@ TextareaText[group="TextContent Entity"] { textareaText* }
 }
 
 AttributeValue {
-  "\"" (attributeContentDouble | EntityReference | CharacterReference)* "\"" |
-  "\'" (attributeContentSingle | EntityReference | CharacterReference)* "\'"
+  "\"" (attributeContentDouble | EntityReference | CharacterReference | InvalidEntity)* "\"" |
+  "\'" (attributeContentSingle | EntityReference | CharacterReference | InvalidEntity)* "\'"
 }
 
 Comment { commentStart commentContent* commentEnd }
