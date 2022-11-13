@@ -141,6 +141,14 @@ Document(Element(SelfClosingTag(StartTag,TagName,EndTag)))
 
 Document(Element(OpenTag(StartTag,TagName,EndTag)))
 
+# Self closed tag
+
+<p />
+
+==>
+
+Document(Element(SelfClosingTag(StartTag, TagName, EndTag)))
+
 # Nested mismatched tag
 
 <a><b><c></c></x></a>

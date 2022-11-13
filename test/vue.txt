@@ -17,7 +17,7 @@ Document(
 
 Document(
   Element(
-    OpenTag(StartTag, TagName, Attribute(AttributeName, Is, AttributeValue),EndTag),
+    OpenTag(StartTag, TagName, Attribute(AttributeName, Is, AttributeValue), EndTag),
     CloseTag(StartCloseTag, TagName, EndTag)))
 
 # Parses Vue @click shorthand syntax
@@ -52,5 +52,30 @@ Document(
 Document(
   Element(
     OpenTag(StartTag, TagName, Attribute(AttributeName, Is, AttributeValue), EndTag),
+    Text,
+    CloseTag(StartCloseTag, TagName, EndTag)))
+
+# Parses Vue Single File Component templates
+
+<template>
+  <Header />
+  <Main />
+  <router-view />
+</template>
+
+==>
+
+Document(
+  Element(
+    OpenTag(StartTag, TagName, EndTag),
+    Text,
+    Element(
+      SelfClosingTag(StartTag, TagName, EndTag)),
+    Text,
+    Element(
+      SelfClosingTag(StartTag, TagName, EndTag)),
+    Text,
+    Element(
+      SelfClosingTag(StartTag, TagName, EndTag)),
     Text,
     CloseTag(StartCloseTag, TagName, EndTag)))

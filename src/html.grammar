@@ -35,7 +35,8 @@ TextareaText[group="TextContent Entity"] { textareaText* }
   }
 
   SelfClosingTag {
-    StartSelfClosingTag TagName Attribute* EndTag
+    StartSelfClosingTag TagName Attribute* "/"? EndTag |
+    StartTag TagName Attribute* "/" EndTag
   }
 
   MismatchedCloseTag {
@@ -121,7 +122,7 @@ Comment { commentStart commentContent* commentEnd }
 }
 
 @tokens {
-  EndTag[openedBy="StartTag StartCloseTag"] { "/"? ">" }
+  EndTag[openedBy="StartTag StartCloseTag"] { ">" }
 
   nameStart {
     ":" | @asciiLetter | "_" |
