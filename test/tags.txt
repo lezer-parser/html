@@ -320,3 +320,14 @@ Document(CloseTag(StartCloseTag,TagName,EndTag))
 ==>
 
 Document(Element(SelfClosingTag(StartTag, TagName, Attribute(AttributeName, Is, AttributeValue(InvalidEntity)), EndTag)))
+
+# Supports self-closing dialect {"dialect": "selfClosing"}
+
+<section><image id=i2/></section>
+
+==>
+
+Document(Element(
+  OpenTag(StartTag,TagName,EndTag),
+  Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),SelfClosingEndTag)),
+  CloseTag(StartCloseTag,TagName,EndTag)))

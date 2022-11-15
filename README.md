@@ -11,7 +11,12 @@ This package exports two bindings:
 
 **`parser`**`: Parser`
 
-The parser instance for the basic HTML grammar.
+The parser instance for the basic HTML grammar. Supports two dialects:
+
+ - `"noMatch"` turns off tag matching, creating regular syntax nodes
+   even for mismatched tags.
+
+ - `"selfClosing"` adds support for `/>` self-closing tag syntax.
 
 **`configureNesting`**`(tags: {`\
 `  tag: string,`\

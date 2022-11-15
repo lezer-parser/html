@@ -1,6 +1,6 @@
 @top Document { (entity | DoctypeDecl)+ }
 
-@dialects { noMatch }
+@dialects { noMatch, selfClosing }
 
 entity[@isGroup=Entity] {
   Text |
@@ -35,7 +35,8 @@ TextareaText[group="TextContent Entity"] { textareaText* }
   }
 
   SelfClosingTag {
-    StartSelfClosingTag TagName Attribute* EndTag
+    StartSelfClosingTag TagName Attribute* EndTag |
+    StartTag TagName Attribute* SelfClosingEndTag
   }
 
   MismatchedCloseTag {
@@ -104,7 +105,7 @@ Comment { commentStart commentContent* commentEnd }
 }
 
 @external tokens tagStart from "./tokens.js" {
-  StartTag[closedBy=EndTag],
+  StartTag[closedBy="EndTag SelfClosingEndTag"],
   StartScriptTag[@name=StartTag,closedBy=EndTag],
   StartStyleTag[@name=StartTag,closedBy=EndTag],
   StartTextareaTag[@name=StartTag,closedBy=EndTag],
@@ -122,6 +123,8 @@ Comment { commentStart commentContent* commentEnd }
 
 @tokens {
   EndTag[openedBy="StartTag StartCloseTag"] { "/"? ">" }
+  SelfClosingEndTag[openedBy=StartTag,@dialect=selfClosing] { "/>" }
+  @precedence { SelfClosingEndTag, EndTag }
 
   nameStart {
     ":" | @asciiLetter | "_" |
