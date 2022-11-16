@@ -1,3 +1,13 @@
+## 1.1.0 (2022-11-16)
+
+### Bug fixes
+
+Allow more characters in attribute names, following HTML spec.
+
+### New features
+
+The new `"selfClosing"` dialect allows `/>` syntax to be used to create self-closing tags.
+
 ## 1.0.1 (2022-07-27)
 
 ### Bug fixes
