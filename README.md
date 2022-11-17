@@ -19,9 +19,9 @@ The parser instance for the basic HTML grammar. Supports two dialects:
  - `"selfClosing"` adds support for `/>` self-closing tag syntax.
 
 **`configureNesting`**`(tags: {`\
-`  tag: string,`\
-`  attrs?: (attrs: {[attr: string]: string}) => boolean,`\
-`  parser: {startParse: (input: Input, startPos: number, context: ParseContext) => PartialParse},`\
+`  tag: "script" | "style" | "textarea",`\
+`  attrs?: (attrs: {[attr: string]: string}) => boolean,`\
+`  parser: {startParse: (input: Input, startPos: number, context: ParseContext) => PartialParse},`\
 `}[]): {[name: string]: NestedParser}`
 
 Create a nested parser config object which overrides the way the
