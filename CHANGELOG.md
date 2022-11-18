@@ -1,3 +1,9 @@
+## 1.1.1 (2022-11-18)
+
+### Bug fixes
+
+Align allowed characters in unquoted attribute values with the spec. Replace another unicode escape with a character
+
 ## 1.1.0 (2022-11-16)
 
 ### Bug fixes
