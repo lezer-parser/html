@@ -142,7 +142,7 @@ Comment { commentStart commentContent* commentEnd }
 
   AttributeName { ![\u0000-\u0020\u007F-\u009F"'>/=\uFDD0-\uFDEF\uFFFE\uFFFF]+ }
 
-  UnquotedAttributeValue { ![ \t\n\r\u000C=<>"'\u0060]+ }
+  UnquotedAttributeValue { ![ \t\n\r\u000C=<>"'`]+ }
 
   attributeContentDouble { !["&]+ }
 
