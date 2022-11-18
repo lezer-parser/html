@@ -61,6 +61,19 @@ Document(Element(OpenTag(StartTag,TagName,
   Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
 CloseTag(StartCloseTag,TagName,EndTag)))
 
+# Unquoted attributes with slashes
+
+<link as=font crossorigin=anonymous href=/fonts/google-sans/regular/latin.woff2 rel=preload>
+
+==>
+
+Document(Element(SelfClosingTag(StartTag,TagName,
+  Attribute(AttributeName,Is,UnquotedAttributeValue),
+  Attribute(AttributeName,Is,UnquotedAttributeValue),
+  Attribute(AttributeName,Is,UnquotedAttributeValue),
+  Attribute(AttributeName,Is,UnquotedAttributeValue),
+EndTag)))
+
 # Single-quoted attributes
 
 <link x='one' z='two&amp;'>
@@ -323,7 +336,7 @@ Document(Element(SelfClosingTag(StartTag, TagName, Attribute(AttributeName, Is, 
 
 # Supports self-closing dialect {"dialect": "selfClosing"}
 
-<section><image id=i2/></section>
+<section><image id=i2 /></section>
 
 ==>
 
