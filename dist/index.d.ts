@@ -3,8 +3,12 @@ import {Input, PartialParse, Parser, TreeCursor, ParseWrapper} from "@lezer/comm
 
 export const parser: LRParser
 
-export function configureNesting(tags: readonly {
+export function configureNesting(tags?: readonly {
   tag: "script" | "style" | "textarea",
   attrs?: (attrs: {[attr: string]: string}) => boolean,
+  parser: Parser
+}[], attributes?: {
+  name: string,
+  tagName?: string,
   parser: Parser
 }[]): ParseWrapper

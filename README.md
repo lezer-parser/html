@@ -18,16 +18,20 @@ The parser instance for the basic HTML grammar. Supports two dialects:
 
  - `"selfClosing"` adds support for `/>` self-closing tag syntax.
 
-**`configureNesting`**`(tags: {`\
+**`configureNesting`**`(tags?: {`\
 `  tag: "script" | "style" | "textarea",`\
 `  attrs?: (attrs: {[attr: string]: string}) => boolean,`\
-`  parser: {startParse: (input: Input, startPos: number, context: ParseContext) => PartialParse},`\
-`}[]): {[name: string]: NestedParser}`
+`  parser: Parser,`\
+`}[], attributes?: {`\
+`  name: string,`\
+`  tagName?: string,`\
+`  parser: Parser,`\
+`}[]): ParseWrapper`
 
 Create a nested parser config object which overrides the way the
-content of some tags is parsed. Each override is an object with a
-`tag` property holding the (lower case) tag name to override, and an
-optional `attrs` predicate that, if given, has to return true for the
-tag's attributes for this override to apply.
+content of some tags or attributes is parsed. Each tag override is an
+object with a `tag` property holding the (lower case) tag name to
+override, and an optional `attrs` predicate that, if given, has to
+return true for the tag's attributes for this override to apply.
 
 The `parser` property describes the way the tag's content is parsed.
