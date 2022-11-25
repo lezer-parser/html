@@ -1,3 +1,9 @@
+## 1.2.0 (2022-11-25)
+
+### New features
+
+`configureNesting` now takes a second argument that can be used to specify that the value of some attributes should be parsed with an external parser.
+
 ## 1.1.1 (2022-11-18)
 
 ### Bug fixes
