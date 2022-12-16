@@ -1,3 +1,9 @@
+## 1.3.0 (2022-12-16)
+
+### New features
+
+`configureNesting` now supports targeting tags other than `style`, `script`, and `textarea`.
+
 ## 1.2.0 (2022-11-25)
 
 ### New features
