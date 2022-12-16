@@ -19,7 +19,7 @@ The parser instance for the basic HTML grammar. Supports two dialects:
  - `"selfClosing"` adds support for `/>` self-closing tag syntax.
 
 **`configureNesting`**`(tags?: {`\
-`  tag: "script" | "style" | "textarea",`\
+`  tag: string,`\
 `  attrs?: (attrs: {[attr: string]: string}) => boolean,`\
 `  parser: Parser,`\
 `}[], attributes?: {`\

@@ -1,10 +1,11 @@
-import {ScriptText, StyleText, TextareaText, Element, TagName, Attribute, AttributeName,
+import {ScriptText, StyleText, TextareaText,
+        Element, TagName, Attribute, AttributeName, OpenTag, CloseTag,
         AttributeValue, UnquotedAttributeValue} from "./parser.terms.js"
 import {parseMixed} from "@lezer/common"
 
-function getAttrs(element, input) {
+function getAttrs(openTag, input) {
   let attrs = Object.create(null)
-  for (let att of element.firstChild.getChildren(Attribute)) {
+  for (let att of openTag.getChildren(Attribute)) {
     let name = att.getChild(AttributeName), value = att.getChild(AttributeValue) || att.getChild(UnquotedAttributeValue)
     if (name) attrs[input.read(name.from, name.to)] =
       !value ? "" : value.type.id == AttributeValue ? input.read(value.from + 1, value.to - 1) : input.read(value.from, value.to)
@@ -12,17 +13,22 @@ function getAttrs(element, input) {
   return attrs
 }
 
+function findTagName(openTag, input) {
+  let tagNameNode = openTag.getChild(TagName)
+  return tagNameNode ? input.read(tagNameNode.from, tagNameNode.to) : " "
+}
+
 function maybeNest(node, input, tags) {
   let attrs
   for (let tag of tags) {
-    if (!tag.attrs || tag.attrs(attrs || (attrs = getAttrs(node.node.parent, input))))
+    if (!tag.attrs || tag.attrs(attrs || (attrs = getAttrs(node.node.parent.firstChild, input))))
       return {parser: tag.parser}
   }
   return null
 }
 
 // tags?: {
-//   tag: "script" | "style" | "textarea",
+//   tag: string,
 //   attrs?: ({[attr: string]: string}) => boolean,
 //   parser: Parser
 // }[]
@@ -33,10 +39,9 @@ function maybeNest(node, input, tags) {
 // }[]
  
 export function configureNesting(tags = [], attributes = []) {
-  let script = [], style = [], textarea = []
+  let script = [], style = [], textarea = [], other = []
   for (let tag of tags) {
-    let array = tag.tag == "script" ? script : tag.tag == "style" ? style : tag.tag == "textarea" ? textarea : null
-    if (!array) throw new RangeError("Only script, style, and textarea tags can host nested parsers")
+    let array = tag.tag == "script" ? script : tag.tag == "style" ? style : tag.tag == "textarea" ? textarea : other
     array.push(tag)
   }
   let attrs = attributes.length ? Object.create(null) : null
@@ -48,18 +53,22 @@ export function configureNesting(tags = [], attributes = []) {
     if (id == StyleText) return maybeNest(node, input, style)
     if (id == TextareaText) return maybeNest(node, input, textarea)
 
+    if (id == OpenTag && other.length) {
+      let n = node.node, tagName = findTagName(n, input), attrs
+      for (let tag of other) {
+        if (tag.tag == tagName && (!tag.attrs || tag.attrs(attrs || (attrs = getAttrs(n, input))))) {
+          let close = n.parent.lastChild
+          return {parser: tag.parser, overlay: [{from: node.to, to: close.type.id == CloseTag ? close.from : n.parent.to}]}
+        }
+      }
+    }
+
     if (attrs && id == Attribute) {
       let n = node.node, nameNode
       if (nameNode = n.firstChild) {
         let matches = attrs[input.read(nameNode.from, nameNode.to)]
         if (matches) for (let attr of matches) {
-          if (attr.tagName) {
-            if (!tagName) {
-              let tagNameNode = n.parent.getChild(TagName)
-              tagName = tagNameNode ? input.read(tagNameNode.from, tagNameNode.to) : " "
-            }
-            if (attrTagName != tagName) continue
-          }
+          if (attr.tagName && attr.tagName != findTagName(n.parent, input)) continue
           let value = n.lastChild
           if (value.type.id == AttributeValue)
             return {parser: attr.parser, overlay: [{from: value.from + 1, to: value.to - 1}]}

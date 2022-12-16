@@ -4,7 +4,7 @@ import {Input, PartialParse, Parser, TreeCursor, ParseWrapper} from "@lezer/comm
 export const parser: LRParser
 
 export function configureNesting(tags?: readonly {
-  tag: "script" | "style" | "textarea",
+  tag: string,
   attrs?: (attrs: {[attr: string]: string}) => boolean,
   parser: Parser
 }[], attributes?: {
