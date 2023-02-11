@@ -1,3 +1,9 @@
+## 1.3.1 (2023-02-11)
+
+### Bug fixes
+
+Always allow self-closing tags in `<svg>` and `<math>` tags.
+
 ## 1.3.0 (2022-12-16)
 
 ### New features
