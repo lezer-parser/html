@@ -6,7 +6,8 @@ import {StartTag, StartCloseTag, NoMatchStartCloseTag, MismatchedStartCloseTag, 
         StartScriptTag, scriptText, StartCloseScriptTag,
         StartStyleTag, styleText, StartCloseStyleTag,
         StartTextareaTag, textareaText, StartCloseTextareaTag,
-        Dialect_noMatch, commentContent as cmntContent} from "./parser.terms.js"
+        Dialect_noMatch, Dialect_selfClosing, EndTag, SelfClosingEndTag,
+        commentContent as cmntContent} from "./parser.terms.js"
 
 const selfClosers = {
   area: true, base: true, br: true, col: true, command: true,
@@ -142,6 +143,21 @@ export const commentContent = new ExternalTokenizer(input => {
       dashes = 0
     }
     input.advance()
+  }
+})
+
+function inForeignElement(context) {
+  for (; context; context = context.parent)
+    if (context.name == "svg" || context.name == "math") return true
+  return false
+}
+
+export const endTag = new ExternalTokenizer((input, stack) => {
+  if (input.next == slash && input.peek(1) == greaterThan) {
+    let selfClosing = stack.dialectEnabled(Dialect_selfClosing) || inForeignElement(stack.context)
+    input.acceptToken(selfClosing ? SelfClosingEndTag : EndTag, 2)
+  } else if (input.next == greaterThan) {
+    input.acceptToken(EndTag, 1)
   }
 })
 

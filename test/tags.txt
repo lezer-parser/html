@@ -344,3 +344,15 @@ Document(Element(
   OpenTag(StartTag,TagName,EndTag),
   Element(SelfClosingTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),SelfClosingEndTag)),
   CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Allows self-closing in foreign elements
+
+<div><svg><circle/></svg></div>
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,EndTag),
+  Element(OpenTag(StartTag,TagName,EndTag),
+    Element(SelfClosingTag(StartTag,TagName,SelfClosingEndTag)),
+    CloseTag(StartCloseTag,TagName,EndTag)),
+  CloseTag(StartCloseTag,TagName,EndTag)))
