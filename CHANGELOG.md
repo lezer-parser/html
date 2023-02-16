@@ -1,3 +1,9 @@
+## 1.3.2 (2023-02-16)
+
+### Bug fixes
+
+Fix a crash caused by nexted parsing of attributes returning invalid ranges for attributes missing their closing quote.
+
 ## 1.3.1 (2023-02-11)
 
 ### Bug fixes
