@@ -70,10 +70,13 @@ export function configureNesting(tags = [], attributes = []) {
         if (matches) for (let attr of matches) {
           if (attr.tagName && attr.tagName != findTagName(n.parent, input)) continue
           let value = n.lastChild
-          if (value.type.id == AttributeValue)
-            return {parser: attr.parser, overlay: [{from: value.from + 1, to: value.to - 1}]}
-          else if (value.type.id == UnquotedAttributeValue)
+          if (value.type.id == AttributeValue) {
+            let from = value.from + 1
+            let to = value.to - (value.lastChild?.isError ? 0 : 1)
+            if (to > from) return {parser: attr.parser, overlay: [{from, to}]}
+          } else if (value.type.id == UnquotedAttributeValue) {
             return {parser: attr.parser, overlay: [{from: value.from, to: value.to}]}
+          }
         }
       }
     }
