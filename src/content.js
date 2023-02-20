@@ -72,7 +72,7 @@ export function configureNesting(tags = [], attributes = []) {
           let value = n.lastChild
           if (value.type.id == AttributeValue) {
             let from = value.from + 1
-            let to = value.to - (value.lastChild?.isError ? 0 : 1)
+            let last = value.lastChild, to = value.to - (last && last.isError ? 0 : 1)
             if (to > from) return {parser: attr.parser, overlay: [{from, to}]}
           } else if (value.type.id == UnquotedAttributeValue) {
             return {parser: attr.parser, overlay: [{from: value.from, to: value.to}]}
