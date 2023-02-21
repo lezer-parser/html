@@ -1,3 +1,9 @@
+## 1.3.3 (2023-02-21)
+
+### Bug fixes
+
+Make sure build output is strictly ES6 again.
+
 ## 1.3.2 (2023-02-16)
 
 ### Bug fixes
