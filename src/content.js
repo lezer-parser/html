@@ -53,12 +53,12 @@ export function configureNesting(tags = [], attributes = []) {
     if (id == StyleText) return maybeNest(node, input, style)
     if (id == TextareaText) return maybeNest(node, input, textarea)
 
-    if (id == OpenTag && other.length) {
-      let n = node.node, tagName = findTagName(n, input), attrs
-      for (let tag of other) {
+    if (id == Element && other.length) {
+      let n = node.node, open = n.firstChild, tagName = open && findTagName(open, input), attrs
+      if (tagName) for (let tag of other) {
         if (tag.tag == tagName && (!tag.attrs || tag.attrs(attrs || (attrs = getAttrs(n, input))))) {
-          let close = n.parent.lastChild
-          return {parser: tag.parser, overlay: [{from: node.to, to: close.type.id == CloseTag ? close.from : n.parent.to}]}
+          let close = n.lastChild
+          return {parser: tag.parser, overlay: [{from: open.to, to: close.type.id == CloseTag ? close.from : n.to}]}
         }
       }
     }
