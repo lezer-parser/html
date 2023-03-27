@@ -1,3 +1,9 @@
+## 1.3.4 (2023-03-27)
+
+### Bug fixes
+
+Fix a bug that caused mixed parsing of non-style/script elements to attach the nested parse tree to the incorrect node.
+
 ## 1.3.3 (2023-02-21)
 
 ### Bug fixes
