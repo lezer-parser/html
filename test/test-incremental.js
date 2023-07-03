@@ -1,4 +1,4 @@
-import {parser as baseParser} from "../dist/index.es.js"
+import {parser as baseParser} from "../dist/index.js"
 import {TreeFragment} from "@lezer/common"
 
 let parser = baseParser.configure({bufferLength: 2})
