@@ -356,3 +356,15 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),
     Element(SelfClosingTag(StartTag,TagName,SelfClosingEndTag)),
     CloseTag(StartCloseTag,TagName,EndTag)),
   CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Parses multiple unfinished tags in a row
+
+<div
+<div
+<div
+
+==>
+
+Document(Element(OpenTag(StartTag,TagName,⚠),
+  Element(OpenTag(StartTag,TagName,⚠),
+    Element(OpenTag(StartTag,TagName,⚠),⚠),⚠),⚠))
