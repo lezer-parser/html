@@ -1,3 +1,9 @@
+## 1.3.6 (2023-07-12)
+
+### Bug fixes
+
+Improve parsing of multiple unfinished opening tags by disallowing less-than characters in attribute names.
+
 ## 1.3.5 (2023-07-03)
 
 ### Bug fixes
