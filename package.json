@@ -15,7 +15,7 @@
   "devDependencies": {
     "@lezer/javascript": "^1.0.0",
     "@lezer/generator": "^1.0.0",
-    "mocha": "^9.0.1",
+    "mocha": "^10.2.0",
     "rollup": "^2.52.2",
     "@rollup/plugin-node-resolve": "^9.0.0"
   },
