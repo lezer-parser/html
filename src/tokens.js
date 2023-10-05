@@ -137,7 +137,7 @@ export const commentContent = new ExternalTokenizer(input => {
     if (input.next == dash) {
       dashes++
     } else if (input.next == greaterThan && dashes >= 2) {
-      if (i > 3) input.acceptToken(cmntContent, -2)
+      if (i >= 3) input.acceptToken(cmntContent, -2)
       break
     } else {
       dashes = 0
