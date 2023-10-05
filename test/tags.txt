@@ -117,10 +117,13 @@ Document(ProcessingInst,Element(OpenTag(StartTag,TagName,EndTag),ProcessingInst,
 
 <!-- top comment -->
 <element><!-- inner comment --> text</element>
+<!---->
+<!--
+-->
 
 ==>
 
-Document(Comment,Text,Element(OpenTag(StartTag,TagName,EndTag),Comment,Text,CloseTag(StartCloseTag,TagName,EndTag)))
+Document(Comment,Text,Element(OpenTag(StartTag,TagName,EndTag),Comment,Text,CloseTag(StartCloseTag,TagName,EndTag)),Text,Comment,Text,Comment)
 
 # Mismatched tag
 
