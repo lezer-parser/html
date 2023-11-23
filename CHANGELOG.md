@@ -1,3 +1,11 @@
+## 1.3.7 (2023-11-23)
+
+### Bug fixes
+
+Fix a bug that caused the parser to not properly recognize empty HTML comments. Don't emit nested parses for empty elements in configureNesting
+
+Fix an issue where `configureNesting` could emit empty overlay ranges for empty elements.
+
 ## 1.3.6 (2023-07-12)
 
 ### Bug fixes
