@@ -1,3 +1,11 @@
+## 1.3.8 (2023-12-28)
+
+### Bug fixes
+
+Add `bidiIsolate` node props for tags, comments, and attributes.
+
+Mark tags, attributes, and comments as isolating for bidirectional text.
+
 ## 1.3.7 (2023-11-23)
 
 ### Bug fixes
