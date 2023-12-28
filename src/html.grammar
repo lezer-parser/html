@@ -30,48 +30,48 @@ StyleText[group="TextContent Entity"] { styleText* }
 TextareaText[group="TextContent Entity"] { textareaText* }
 
 @skip { space } {
-  OpenTag[closedBy=CloseTag,bidiIsolate=ltr] {
+  OpenTag[closedBy=CloseTag,isolate=ltr] {
     StartTag TagName Attribute* EndTag
   }
 
-  SelfClosingTag[bidiIsolate=ltr] {
+  SelfClosingTag[isolate=ltr] {
     StartSelfClosingTag TagName Attribute* EndTag |
     StartTag TagName Attribute* SelfClosingEndTag
   }
 
-  MismatchedCloseTag[bidiIsolate=ltr] {
+  MismatchedCloseTag[isolate=ltr] {
     MismatchedStartCloseTag TagName EndTag
   }
 
-  NoMatchCloseTag[@name=CloseTag,bidiIsolate=ltr] {
+  NoMatchCloseTag[@name=CloseTag,isolate=ltr] {
     NoMatchStartCloseTag TagName EndTag
   }
 
-  CloseTag[openedBy=OpenTag,bidiIsolate=ltr] {
+  CloseTag[openedBy=OpenTag,isolate=ltr] {
     StartCloseTag TagName EndTag
   }
 
-  OpenScriptTag[@name=OpenTag,closedBy=CloseTag,bidiIsolate=ltr] {
+  OpenScriptTag[@name=OpenTag,closedBy=CloseTag,isolate=ltr] {
     StartScriptTag TagName Attribute* EndTag
   }
 
-  CloseScriptTag[@name=CloseTag,openedBy=OpenTag,bidiIsolate=ltr] {
+  CloseScriptTag[@name=CloseTag,openedBy=OpenTag,isolate=ltr] {
     StartCloseScriptTag TagName EndTag
   }
 
-  OpenStyleTag[@name=OpenTag,closedBy=CloseTag,bidiIsolate=ltr] {
+  OpenStyleTag[@name=OpenTag,closedBy=CloseTag,isolate=ltr] {
     StartStyleTag TagName Attribute* EndTag
   }
 
-  CloseStyleTag[@name=CloseTag,openedBy=OpenTag,bidiIsolate=ltr] {
+  CloseStyleTag[@name=CloseTag,openedBy=OpenTag,isolate=ltr] {
     StartCloseStyleTag TagName EndTag
   }
 
-  OpenTextareaTag[@name=OpenTag,closedBy=CloseTag,bidiIsolate=ltr] {
+  OpenTextareaTag[@name=OpenTag,closedBy=CloseTag,isolate=ltr] {
     StartTextareaTag TagName Attribute* EndTag
   }
 
-  CloseTextareaTag[@name=CloseTag,openedBy=OpenTag,bidiIsolate=ltr] {
+  CloseTextareaTag[@name=CloseTag,openedBy=OpenTag,isolate=ltr] {
     StartCloseTextareaTag TagName EndTag
   }
 
@@ -80,12 +80,12 @@ TextareaText[group="TextContent Entity"] { textareaText* }
   }
 }
 
-AttributeValue[bidiIsolate=auto] {
+AttributeValue[isolate] {
   "\"" (attributeContentDouble | EntityReference | CharacterReference | InvalidEntity)* "\"" |
   "\'" (attributeContentSingle | EntityReference | CharacterReference | InvalidEntity)* "\'"
 }
 
-Comment[bidiIsolate=auto] { commentStart commentContent* commentEnd }
+Comment[isolate] { commentStart commentContent* commentEnd }
 
 @context elementContext from "./tokens.js"
 
@@ -143,7 +143,7 @@ Comment[bidiIsolate=auto] { commentStart commentContent* commentEnd }
 
   AttributeName { ![\u0000-\u0020\u007F-\u009F"'<>/=\uFDD0-\uFDEF\uFFFE\uFFFF]+ }
 
-  UnquotedAttributeValue[bidiIsolate=auto] { ![ \t\n\r\u000C=<>"'`]+ }
+  UnquotedAttributeValue[isolate] { ![ \t\n\r\u000C=<>"'`]+ }
 
   attributeContentDouble { !["&]+ }
 
