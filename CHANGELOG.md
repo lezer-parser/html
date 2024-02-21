@@ -1,3 +1,9 @@
+## 1.3.9 (2024-02-21)
+
+### Bug fixes
+
+When using the "selfClosing" dialect, fix parse errors for `<br/>` (tags that implicitly self-close) and `<script/>` (special tags).
+
 ## 1.3.8 (2023-12-28)
 
 ### Bug fixes
