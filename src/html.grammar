@@ -35,8 +35,8 @@ TextareaText[group="TextContent Entity"] { textareaText* }
   }
 
   SelfClosingTag[isolate=ltr] {
-    StartSelfClosingTag TagName Attribute* EndTag |
-    StartTag TagName Attribute* SelfClosingEndTag
+    StartSelfClosingTag TagName Attribute* (EndTag | SelfClosingEndTag) |
+    (StartTag | StartScriptTag | StartStyleTag | StartTextareaTag) TagName Attribute* SelfClosingEndTag
   }
 
   MismatchedCloseTag[isolate=ltr] {

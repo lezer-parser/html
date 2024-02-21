@@ -371,3 +371,27 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),
 Document(Element(OpenTag(StartTag,TagName,⚠),
   Element(OpenTag(StartTag,TagName,⚠),
     Element(OpenTag(StartTag,TagName,⚠),⚠),⚠),⚠))
+
+# Allows self-closing on special tags {"dialect": "selfClosing"}
+
+<body>
+  <br/>
+  <textarea/>
+  <script/>
+  <style/>
+</body>
+
+==>
+
+Document(Element(
+  OpenTag(StartTag,TagName,EndTag),
+  Text,
+  Element(SelfClosingTag(StartTag,TagName,SelfClosingEndTag)),
+  Text,
+  Element(SelfClosingTag(StartTag,TagName,SelfClosingEndTag)),
+  Text,
+  Element(SelfClosingTag(StartTag,TagName,SelfClosingEndTag)),
+  Text,
+  Element(SelfClosingTag(StartTag,TagName,SelfClosingEndTag)),
+  Text,
+  CloseTag(StartCloseTag,TagName,EndTag)))
