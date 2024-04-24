@@ -75,8 +75,6 @@ const lessThan = 60, greaterThan = 62, slash = 47, question = 63, bang = 33, das
 function ElementContext(name, parent) {
   this.name = name
   this.parent = parent
-  this.hash = parent ? parent.hash : 0
-  for (let i = 0; i < name.length; i++) this.hash += (this.hash << 4) + name.charCodeAt(i) + (name.charCodeAt(i) << 8)
 }
 
 const startTagTerms = [StartTag, StartSelfClosingTag, StartScriptTag, StartStyleTag, StartTextareaTag]
@@ -94,7 +92,6 @@ export const elementContext = new ContextTracker({
     return type == StartTag || type == OpenTag
       ? new ElementContext(tagNameAfter(input, 1) || "", context) : context
   },
-  hash(context) { return context ? context.hash : 0 },
   strict: false
 })
 
