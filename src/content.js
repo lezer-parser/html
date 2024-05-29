@@ -56,7 +56,7 @@ export function configureNesting(tags = [], attributes = []) {
     if (id == Element && other.length) {
       let n = node.node, open = n.firstChild, tagName = open && findTagName(open, input), attrs
       if (tagName) for (let tag of other) {
-        if (tag.tag == tagName && (!tag.attrs || tag.attrs(attrs || (attrs = getAttrs(n, input))))) {
+        if (tag.tag == tagName && (!tag.attrs || tag.attrs(attrs || (attrs = getAttrs(open, input))))) {
           let close = n.lastChild
           let to = close.type.id == CloseTag ? close.from : n.to
           if (to > open.to)
