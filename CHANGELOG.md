@@ -1,3 +1,9 @@
+## 1.3.10 (2024-05-29)
+
+### Bug fixes
+
+Fix an issue that broke attribute reading when defining a nested language on a tag that isn't a `style`, `textearea`, or `script` tag.
+
 ## 1.3.9 (2024-02-21)
 
 ### Bug fixes
