@@ -1,3 +1,9 @@
+## 1.3.11 (2025-09-25)
+
+### Bug fixes
+
+Don't parse `<` followed by whitespace as the start of a tag.
+
 ## 1.3.10 (2024-05-29)
 
 ### Bug fixes
