@@ -170,25 +170,6 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),
     ⚠),
   CloseTag(StartCloseTag,TagName,EndTag)))
 
-# Mismatched tag with whitespace
-
-<doc>
-  <
-    foo bar="10">
-    blah
-  </oof>
-</doc>
-
-==>
-
-Document(Element(OpenTag(StartTag,TagName,EndTag),
-  Text,
-  Element(OpenTag(StartTag,TagName,Attribute(AttributeName,Is,AttributeValue),EndTag),
-    Text,
-    MismatchedCloseTag(StartCloseTag,TagName,EndTag),
-    Text, ⚠),
-  CloseTag(StartCloseTag,TagName,EndTag)))
-
 # Incomplete close tag
 
 <html><body></</html>
@@ -289,22 +270,6 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),
 
 Document(Element(OpenTag(StartTag,TagName,EndTag),ScriptText,CloseTag(StartCloseTag,TagName,EndTag)))
 
-# Allows whitespace in tags
-
-<
-  body
-    foo=bar
-  >hi</
- body
- >
-
-==>
-
-Document(Element(
-  OpenTag(StartTag,TagName,Attribute(AttributeName,Is,UnquotedAttributeValue),EndTag),
-  Text,
-  CloseTag(StartCloseTag,TagName,EndTag)))
-
 # Doesn't get confused by a stray ampersand
 
 <html>a&b</html>
@@ -395,3 +360,11 @@ Document(Element(
   Element(SelfClosingTag(StartTag,TagName,SelfClosingEndTag)),
   Text,
   CloseTag(StartCloseTag,TagName,EndTag)))
+
+# Only treats less-than as opening a tag when followed by a name
+
+< div>x
+
+==>
+
+Document(Text,Text)
