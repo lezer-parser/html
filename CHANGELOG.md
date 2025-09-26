@@ -1,3 +1,9 @@
+## 1.3.12 (2025-09-26)
+
+### Bug fixes
+
+Emit tokens for `<` characters without tag name, so that autocompletion can work with them.
+
 ## 1.3.11 (2025-09-25)
 
 ### Bug fixes
