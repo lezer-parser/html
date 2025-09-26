@@ -10,6 +10,7 @@ entity[@isGroup=Entity] {
   Element |
   Comment |
   ProcessingInst |
+  IncompleteTag |
   IncompleteCloseTag |
   MismatchedCloseTag |
   NoMatchCloseTag
@@ -119,6 +120,7 @@ Comment[isolate] { commentStart commentContent* commentEnd }
   NoMatchStartCloseTag[@name=StartCloseTag,closedBy=EndTag]
   MismatchedStartCloseTag[@name=StartCloseTag,closedBy=EndTag],
   missingCloseTag,
+  IncompleteTag,
   IncompleteCloseTag
 }
 

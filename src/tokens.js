@@ -2,7 +2,7 @@
 
 import {ExternalTokenizer, ContextTracker} from "@lezer/lr"
 import {StartTag, StartCloseTag, NoMatchStartCloseTag, MismatchedStartCloseTag, missingCloseTag,
-        StartSelfClosingTag, IncompleteCloseTag, Element, OpenTag, Text,
+        StartSelfClosingTag, IncompleteCloseTag, Element, OpenTag, IncompleteTag,
         StartScriptTag, scriptText, StartCloseScriptTag,
         StartStyleTag, styleText, StartCloseStyleTag,
         StartTextareaTag, textareaText, StartCloseTextareaTag,
@@ -104,7 +104,7 @@ export const tagStart = new ExternalTokenizer((input, stack) => {
   if (close) input.advance()
   let name = tagNameAfter(input, 0)
   if (name === undefined) return
-  if (!name) return input.acceptToken(close ? IncompleteCloseTag : Text)
+  if (!name) return input.acceptToken(close ? IncompleteCloseTag : IncompleteTag)
 
   let parent = stack.context ? stack.context.name : null
   if (close) {

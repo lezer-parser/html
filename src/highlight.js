@@ -1,7 +1,7 @@
 import {styleTags, tags as t} from "@lezer/highlight"
 
 export const htmlHighlighting = styleTags({
-  "Text RawText": t.content,
+  "Text RawText IncompleteTag IncompleteCloseTag": t.content,
   "StartTag StartCloseTag SelfClosingEndTag EndTag": t.angleBracket,
   TagName: t.tagName,
   "MismatchedCloseTag/TagName": [t.tagName,  t.invalid],

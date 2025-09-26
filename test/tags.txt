@@ -367,4 +367,4 @@ Document(Element(
 
 ==>
 
-Document(Text,Text)
+Document(IncompleteTag,Text)
