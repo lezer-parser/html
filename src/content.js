@@ -22,7 +22,7 @@ function maybeNest(node, input, tags) {
   let attrs
   for (let tag of tags) {
     if (!tag.attrs || tag.attrs(attrs || (attrs = getAttrs(node.node.parent.firstChild, input))))
-      return {parser: tag.parser}
+      return {parser: tag.parser, bracketed: true}
   }
   return null
 }
@@ -75,7 +75,7 @@ export function configureNesting(tags = [], attributes = []) {
           if (value.type.id == AttributeValue) {
             let from = value.from + 1
             let last = value.lastChild, to = value.to - (last && last.isError ? 0 : 1)
-            if (to > from) return {parser: attr.parser, overlay: [{from, to}]}
+            if (to > from) return {parser: attr.parser, overlay: [{from, to}], bracketed: true}
           } else if (value.type.id == UnquotedAttributeValue) {
             return {parser: attr.parser, overlay: [{from: value.from, to: value.to}]}
           }
