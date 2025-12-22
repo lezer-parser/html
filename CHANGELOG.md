@@ -1,3 +1,9 @@
+## 1.3.13 (2025-12-22)
+
+### Bug fixes
+
+Set the `bracketed` flag for nested parses inside quotes or tags.
+
 ## 1.3.12 (2025-09-26)
 
 ### Bug fixes
