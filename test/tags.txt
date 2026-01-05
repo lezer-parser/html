@@ -335,7 +335,7 @@ Document(Element(OpenTag(StartTag,TagName,EndTag),
 
 Document(Element(OpenTag(StartTag,TagName,⚠),
   Element(OpenTag(StartTag,TagName,⚠),
-    Element(OpenTag(StartTag,TagName,⚠),⚠),⚠),⚠))
+    Element(OpenTag(StartTag,TagName,⚠)))))
 
 # Allows self-closing on special tags {"dialect": "selfClosing"}
 
