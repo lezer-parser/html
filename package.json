@@ -25,8 +25,8 @@
     "@lezer/common": "^1.2.0"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/lezer-parser/html.git"
+    "type": "git",
+    "url": "git+https://code.haverbeke.berlin/lezer/html.git"
   },
   "scripts": {
     "build": "lezer-generator src/html.grammar -o src/parser && rollup -c",
