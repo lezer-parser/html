@@ -1,3 +1,5 @@
+**This repository has moved to https://code.haverbeke.berlin/lezer/html**
+
 # @lezer/html
 
 This is an HTML grammar for the
